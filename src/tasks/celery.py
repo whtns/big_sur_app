@@ -1,6 +1,6 @@
 from celery import Celery
 
-task_queue = Celery('MiCV',
+task_queue = Celery('BigSuR',
                     broker='redis://127.0.0.1:6379',
                     backend='redis://127.0.0.1:6379',
                     include=['tasks.tasks'])

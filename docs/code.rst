@@ -3,7 +3,7 @@
 The code
 ========
 
-MiCV is a python-based web application. It is written in python and calls heavily upon a few key libraries that contributors will want to be somewhat familiar with:
+BigSuR is a python-based web application. It is written in python and calls heavily upon a few key libraries that contributors will want to be somewhat familiar with:
 
 - ``scanpy``, a single-cell RNA-seq analysis package
 - ``anndata``, a companion to ``scanpy`` that defines and operates on the main data object representation of a scRNA-seq dataset
@@ -31,7 +31,7 @@ At the top level, there are 3 files that set up the web application:
 - ``layouts.py``, where the page layouts are instantiated
 - ``index.py``, which imports from both of the above: this is where the web application is started, the page layouts are actually returned by the web server, and all of the function callbacks are registered to their respective buttons/plots/etc. in the page layouts
 
-For each tab/page in MiCV there is a corresponding folder in the ``src`` directory that contains 4 files:
+For each tab/page in BigSuR there is a corresponding folder in the ``src`` directory that contains 4 files:
 
 - ``_components.py``, where buttons, plots, etc. are defined and uniquely identified
 - ``_layouts.py``, where the components defined in ``_components.py`` are laid out to fill the tab

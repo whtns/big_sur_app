@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Boolean, DateTime, Column, Integer, \
                        String, ForeignKey
+import uuid
 
 class RolesUsers(Base):
     __tablename__ = 'roles_users'
@@ -23,6 +24,8 @@ class User(Base, UserMixin):
     email = Column(String(255), unique=True)
     username = Column(String(255))
     password = Column(String(255))
+    # fs_uniquifier is required by Flask-Security >=4.0.0
+    fs_uniquifier = Column(String(255), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
     last_login_at = Column(DateTime())
     current_login_at = Column(DateTime())
     last_login_ip = Column(String(100))

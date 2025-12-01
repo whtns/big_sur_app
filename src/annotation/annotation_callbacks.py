@@ -1,8 +1,6 @@
 import dash
 from dash.dependencies import Input, Output, State
-import dash_html_components as html
-
-from pseudotime.pseudotime_functions import calculate_gene_trends
+from dash import html
 
 from helper_functions import *
 from plotting.plotting_functions import *
@@ -16,10 +14,8 @@ from app import app
     [Input("main_tabs", "active_tab"),
      Input("define_cluster_button", "n_clicks"),
      Input("clustering_dropdown", "value"),
-     Input("pseudotime_UMAP_plot", "selectedData"),
      Input("expression_UMAP_plot", "selectedData"),
-     Input("violin_gene_plot", "selectedData"),
-     Input("pseudotime_gene_plot", "selectedData")],
+     Input("violin_gene_plot", "selectedData")],
     [State("session-id", "children"),
      State("clustering_UMAP_plot", "selectedData")]
 )
@@ -87,23 +83,18 @@ def refresh_clustering_plot(active_tab,
             # i.e. if the user selected cells from multiple expression violin plots,
             # take the intersection of those cells (logical AND)
             violin_selected = get_violin_intersection(session_ID, violin_selected) 
-            
-            pt_min, pt_max = get_pseudotime_min_max(session_ID, pt_gene_selected)
 
             # add the selected cells to this cluster
             selected_cells = get_cell_intersection(session_ID, 
                              [clust_selected, pt_selected,
-                             expr_selected, violin_selected],
-                             pt_min, pt_max)
+                             expr_selected, violin_selected])
     
             obs.loc[selected_cells, clustering_group] = new_cluster_ID
             obs[clustering_group] = obs[clustering_group].astype('category')
             cache_adata(session_ID, obs, group="obs")
 
-    elif(button_id in ["Pseudotime_UMAP_plot",
-                       "Expression_UMAP_plot",
-                       "Violin_gene_plot",
-                       "Pseudotime_gene_plot"]):
+    elif(button_id in ["Expression_UMAP_plot",
+                       "Violin_gene_plot"]):
         if (pt_selected is None
         and expr_selected is None
         and violin_selected is None
@@ -128,13 +119,11 @@ def refresh_clustering_plot(active_tab,
 
     # figure out which cells need to be selected, based on other graphs
     violin_selected = get_violin_intersection(session_ID, violin_selected)
-    pt_min, pt_max = get_pseudotime_min_max(session_ID, pt_gene_selected)
     selected_cell_intersection = get_cell_intersection(session_ID,
                                                         [clust_selected, 
                                                          pt_selected,
                                                          expr_selected,
-                                                         violin_selected],
-                                                         pt_min, pt_max)
+                                                         violin_selected])
     selected_points = []
     for c in selected_cell_intersection:
         selected_points.append((obs).index.get_loc(c))
@@ -156,60 +145,6 @@ def refresh_UMAP_clustering_count(selected_cells, session_ID, n_total_cells):
 
     if (n_total_cells in [0, None, "", []]):
         n_total_cells = 1
-    n_cells_selected = len(selected_cells["points"])
-    return ("# cells selected: " + str(n_cells_selected) + " | % total: "
-             + str(round(100.0 * n_cells_selected/n_total_cells, 2)))
-
-
-@app.callback(
-    Output("pseudotime_UMAP_plot", "figure"),
-    [Input("pseudotime_dropdown", "value")],
-    [State('session-id', 'children'),
-     State("main_tabs", "active_tab"),
-     State("n_dims_proj_expression_radio", "value")]
-)
-def refresh_pseudotime_plot(pt_plot_type, session_ID, active_tab, 
-                            n_dims_proj, adata=None, data_dir=None):
-    # figure out which button was pressed - what refresh functions to call
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        button_id = "not_triggered"
-        return dash.no_update
-    else:
-        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
-    if (button_id == "pseudotime_dropdown"):
-        if (active_tab != "annotation_tab"):
-            return dash.no_update
-
-    # do nothing if no buttons pressed
-    elif((button_id == "not_triggered")
-      or (pt_plot_type in [0, "", None, []])):
-        return dash.no_update
-    
-    # get the adata object from the cache
-    obs = cache_adata(session_ID, group="obs")
-
-    if ((obs is None)
-    or not (pt_plot_type in obs)):
-        return dash.no_update
-    
-    # regardless of what updates were requested - update the plot
-    return plot_pseudotime_UMAP(session_ID, pt_plot_type)
-
-@app.callback(
-    Output("pseudotime_UMAP_count", "children"),
-    [Input("pseudotime_UMAP_plot", "selectedData")],
-    [State("session-id", "children"),
-     State("total_cell_count", "value")]
-)
-def refresh_UMAP_pseudotime_count(selected_cells, session_ID, n_total_cells):
-    if (selected_cells in ["", 0, [], None]):
-        return dash.no_update
-    
-    if (n_total_cells in [0, None, "", []]):
-        n_total_cells = 1
-
     n_cells_selected = len(selected_cells["points"])
     return ("# cells selected: " + str(n_cells_selected) + " | % total: "
              + str(round(100.0 * n_cells_selected/n_total_cells, 2)))
@@ -311,31 +246,6 @@ def update_multi_gene_dropdown(active_tab, session_ID):
 
     options = [{"label": i, "value": i} for i in gene_list]
     return options
-
-@app.callback(
-    [Output("pseudotime_gene_plot", "figure"),
-     Output("violin_gene_plot", "figure")],
-    [Input("multi_gene_dropdown", "value"),
-     Input("pseudotime_gene_relative_radio", "value"),
-     Input("pseudotime_gene_branch_dropdown", "value")],
-    [State('session-id', 'children')]
-)
-def refresh_pseudotime_gene_plot(selected_genes, relative, branch_n, session_ID):
-    default_return = [dash.no_update, dash.no_update]
-    if (selected_genes in [None, 0, [], ""]):
-        return default_return
-    
-    ret = default_return
-
-    if not(branch_n in ["", None, []]):
-        #gene_trends = cache_gene_trends(session_ID)
-        gene_trends = calculate_gene_trends(session_ID, selected_genes, branch_n)
-        ret[0] = plot_expression_trend(gene_trends, selected_genes, 
-                                       selected_branch=branch_n, 
-                                       relative=relative)
-    
-    ret[1] = plot_expression_violin(session_ID, selected_genes)
-    return ret
 
 
 @app.callback(

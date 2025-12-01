@@ -1,6 +1,5 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import plotly.graph_objs as go
 
 import matplotlib.pyplot as plt
@@ -35,6 +34,9 @@ def plot_UMAP(session_ID, clustering_plot_type, selected_cell_intersection=[], n
     obsm = cache_adata(session_ID, group="obsm")
 
     # validate that there is a 3D projection available if that was requested
+    if obsm is None:
+        print(f"[ERROR] obsm is None for session {session_ID}")
+        return dash.no_update
     if (("X_umap_3D" in obsm.keys()) and (n_dim == 3)):
         coords = pd.DataFrame(obsm["X_umap_3D"], index=obs.index)
     else:
@@ -125,77 +127,6 @@ def plot_UMAP(session_ID, clustering_plot_type, selected_cell_intersection=[], n
             )
         }
 
-def plot_pseudotime_UMAP(session_ID, pt_plot_type, n_dim=2):
-    if (adata_cache_exists(session_ID) is False):
-        return dash.no_update
-    if ((adata_cache_group_exists(session_ID, "obs") is False)
-    or  (adata_cache_group_exists(session_ID, "obsm") is False)):
-        print("[ERROR] obs/obsm for " + str(session_ID) + "does not exist")
-        return dash.no_update
-
-    obs  = cache_adata(session_ID, group="obs")
-    obsm = cache_adata(session_ID, group="obsm")
-
-    if not (pt_plot_type in obs):
-        return dash.no_update
-    
-    # validate that there is a 3D projection available if that was requested
-    if (("X_umap_3D" in obsm.keys()) and (n_dim == 3)):
-        coords = pd.DataFrame(obsm["X_umap_3D"], index=obs.index)
-    else:
-        n_dim = 2
-        coords = pd.DataFrame(obsm["X_umap"], index=obs.index)
-
-    if (pt_plot_type == "pseudotime"):
-    	colorbar_label = "pseudotime"
-    elif (pt_plot_type == "differentiation_potential"):
-    	colorbar_label = "diff. pot."
-    elif ("pseudotime_branch_" in pt_plot_type):
-        colorbar_label = "branch " + str(pt_plot_type[-1]) + " prob."
-
-    traces = []
-    traces.append(
-        go.Scattergl(
-            x=coords[0],
-            y=coords[1],
-            text="Cell ID: " + obs["cell_ID"],
-            mode='markers',
-            marker={
-                'size': point_size_2d,
-                'line': {'width': point_line_width_2d, 'color': 'grey'},
-                "color": obs[str(pt_plot_type)],
-                "colorscale": "plasma",
-                "cmin": 0,
-                "cmax": 1,
-                "colorbar": dict(
-                    title=colorbar_label
-                ),
-            },
-            unselected={
-                "marker": {"opacity": min_opacity,
-                }
-            },
-            selected={
-                "marker": {"opacity": max_opacity,
-                }
-            },
-        )
-    )
-    return {
-        'data': traces,
-        'layout': dict(
-            xaxis={"title": "UMAP 1"},
-            yaxis={"title": "UMAP 2"},
-            margin=margin,
-            legend={'x': 0, 'y': 1},
-            hovermode='closest',
-            transition = {'duration': 250},
-            autosize=True
-            #width=4 * scale,
-            #height=3 * scale
-        )
-    }
-
 def plot_expression_UMAP(session_ID, selected_genes, multi="standard", n_dim=2):
     
     if (adata_cache_exists(session_ID) is False):
@@ -206,6 +137,9 @@ def plot_expression_UMAP(session_ID, selected_genes, multi="standard", n_dim=2):
     obs    = adata.obs
 
     # validate that there is a 3D projection available if that was requested
+    if obsm is None:
+        print(f"[ERROR] adata.obsm is None for session {session_ID}")
+        return dash.no_update
     if (("X_umap_3D" in obsm.keys()) and (n_dim == 3)):
         coords = pd.DataFrame(obsm["X_umap_3D"], index=obs.index)
     else:
@@ -341,91 +275,6 @@ def plot_expression_UMAP(session_ID, selected_genes, multi="standard", n_dim=2):
                 #height=3 * scale
             )
         }
-
-def plot_expression_trend(gene_trends, selected_genes, selected_branch, 
-                          relative="absolute"):
-
-    traces = []
-    trends = gene_trends
-
-    colors = pd.Series(sns.color_palette('Set2', len(selected_genes)), 
-                       index=selected_genes)
-    fill_opacity = 0.1
-    '''
-    fill_colors = list(sns.color_palette('Set2', len(selected_genes)))
-    print(fill_colors)
-    for i, c in enumerate(fill_colors):
-        fill_colors[i] = tuple(list(fill_colors[i]).append(fill_opacity))
-    fill_colors = pd.Series(fill_colors, index=selected_genes)
-    '''
-    for i in selected_genes:
-        if not (i in trends.columns):
-            print("[DEBUG] gene " + str(i)  + " not in gene trends; skipping")
-            continue
-        if (relative == "relative"):
-            trend = trends[i] / np.max(trends[i])
-            ci_upper = trends[i+"_ci_upper"] / np.max(trends[i])
-            ci_lower = trends[i+"_ci_lower"] / np.max(trends[i])
-        else:
-            trend = trends[i]
-            ci_upper = trends[i+"_ci_upper"]
-            ci_lower = trends[i+"_ci_lower"]
-        X = trends["pseudotime"]
-        traces.append(
-            go.Scatter(
-                x=X,
-                y=ci_upper,
-                showlegend=False,
-                mode="lines",
-                line_color=to_rgba_string(colors[i], fill_opacity),
-                fill=None,
-                name=str(i)
-            )
-        )
-        traces.append(
-            go.Scatter(
-                x=X,
-                y=ci_lower,
-                showlegend=False,
-                fill='tonexty',
-                mode="lines",
-                line_color=to_rgba_string(colors[i], fill_opacity),
-                fillcolor=to_rgba_string(colors[i], fill_opacity),
-                name=str(i)
-            )
-        )
-        traces.append(
-            go.Scatter(
-                x=X,
-                y=trend,
-                text=str(i),
-                mode="markers+lines",
-                opacity=1,
-                name=(str(i)),
-                marker={
-                    'size': point_size_pt_trend,
-                },
-                line_color=to_rgba_string(colors[i])
-            )
-        )
-
-    
-    if (traces in [[], None]):
-        print("[DEBUG] no traces added to expression trends plot")
-        return dash.no_update
-
-    return {
-        'data': traces,
-        'layout': dict(
-            xaxis={"title": "Pseudotime"},
-            yaxis={"title": "Expression"},
-            margin=margin,
-            legend={'x': 0, 'y': 1},
-            hovermode='closest',
-            transition = {'duration': 100},
-            autosize=True
-        )
-    }
 
 
 def plot_expression_violin(session_ID, selected_genes, show_points = "all"):

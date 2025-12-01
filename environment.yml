@@ -1,0 +1,57 @@
+name: bigsur
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - mamba
+  - pip
+
+  # Binary / compiled packages (install with mamba/conda-forge for ABI compatibility)
+  - numpy
+  - pandas=2.0.3
+  - scipy
+  - numba=0.62.1
+  - zarr=2.18.3
+  - blosc        # let conda pick a compatible build
+  - filelock=3.20.0
+  - redis
+  - celery=5.5.3
+  - gunicorn=23.0.0
+  - gevent=25.9.1
+  - scanpy=1.11.5
+  - umap-learn=0.5.9
+  - leidenalg=0.11.0
+  - pygam=0.11.0
+  - plotly=6.5.0
+  - dash-bootstrap-components=2.0.4
+  - flask=3.1.2
+  - flask-sqlalchemy
+  - flask-admin=2.0.2
+  - bcrypt
+  - cmake
+  - shortuuid
+
+  # Use pip for the remaining (pure-Python or pip-only) packages
+  - pip:
+    - dash==3.3.0
+    - dash_core_components==2.0.0
+    - dash_html_components==2.0.0
+    - dash-dangerously-set-inner-html==0.0.2
+    - sendgrid
+    - flask-caching==2.3.1
+    - flask-security-too==5.7.0
+    - email_validator
+    - bootstrap-flask
+    - magic-impute==3.0.0
+    - palantir==1.4.2
+    - colour
+    - flask_mail==0.10.0
+    - bbknn        # no strict pin here; fall back to pip if conda-forge doesn't have it
+
+# Notes:
+# - If mamba fails to find `bbknn` or a compatible `blosc` build on conda-forge, install them with pip after creating the env:
+#     mamba activate bigsur
+#     python -m pip install bbknn blosc==1.11.3
+# - Pinning is intentionally relaxed for some compiled packages so conda-forge can resolve compatible builds.
+    - palantir==1.4.2

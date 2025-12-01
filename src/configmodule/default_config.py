@@ -4,4 +4,4 @@ class DefaultConfig(object):
 
 	SECURITY_PASSWORD_SALT = '1381971702542417111521178241349271342290814913196'
 	SECURITY_REGISTERABLE = True #allows user registration
-	DATABASE_URI = 'sqlite:////srv/www/MiCV/databases/misc.db' # user security database
+	DATABASE_URI = 'sqlite:////Library/WebServer/Documents/BigSuR/databases/misc.db' # user security database

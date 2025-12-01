@@ -1,5 +1,4 @@
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 from . import exporting_components as cc
@@ -32,7 +31,7 @@ def exporting_layout(demo=False):
 						html.H3(children="Save analysis"),
 						html.P(
 							'''
-							Save this analyzed dataset to your MiCV 
+							Save this analyzed dataset to your BigSuR 
 							account, to come back to later.
 							'''),
 						dbc.Row(children=[
@@ -54,7 +53,7 @@ def exporting_layout(demo=False):
 							or a subset of cells that you choose using
 							the dropdown menus here.
 							This file will be ready for re-uploading 
-							to MiCV or scanpy for further analysis.
+							to BigSuR or scanpy for further analysis.
 							'''),
 						dbc.Row(children=[
 							dbc.Col(children=[

@@ -1,5 +1,4 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 
@@ -25,64 +24,6 @@ def plot_clustering_UMAP():
             'layout': go.Layout(
                 xaxis={'title': 'UMAP1'},
                 yaxis={'title': "UMAP2"},
-                margin=margin,
-                legend={'x': 0, 'y': 1},
-                hovermode='closest',
-                autosize=True
-            )
-        }
-    )
-    return g
-
-def plot_pseudotime_UMAP():
-    g = dcc.Graph(
-        id='pseudotime_UMAP_plot',
-        figure={
-            'data': [
-                go.Scattergl(
-                    x=None,
-                    y=None,
-                    text=str("NULL"),
-                    mode='markers',
-                    opacity=0.7,
-                    marker={
-                        "line_width": 1
-                    },
-                    name=str("NULL")
-                )
-            ],
-            'layout': go.Layout(
-                xaxis={'title': 'UMAP1'},
-                yaxis={'title': "UMAP2"},
-                margin=margin,
-                legend={'x': 0, 'y': 1},
-                hovermode='closest',
-                autosize=True
-            )
-        }
-    )
-    return g
-
-def plot_gene_pseudotime():
-    g = dcc.Graph(
-        id='pseudotime_gene_plot',
-        figure={
-            'data': [
-                go.Scatter(
-                    x=None,
-                    y=None,
-                    text=str("NULL"),
-                    name=str("NULL"),
-                    mode="markers+lines",
-                    marker={
-                        "opacity": 0,
-                        "line_width": 2
-                    }
-                )
-            ],
-            'layout': go.Layout(
-                xaxis={'title': 'Pseudotime'},
-                yaxis={'title': "Expression"},
                 margin=margin,
                 legend={'x': 0, 'y': 1},
                 hovermode='closest',
@@ -213,43 +154,6 @@ def multi_gene_dropdown():
         ) 
     return m 
 
-def pseudotime_dropdown():
-    m = dcc.Dropdown(
-        id='pseudotime_dropdown',
-        options=[
-            {'label': 'pseudotime', 'value': 'pseudotime'},
-            {'label': 'differentiation potential', 'value': 'differentiation_potential'},
-        ],
-        value=None,
-        placeholder="(only if calculated previously) Choose a pseudotime observation",
-        multi=False,
-        searchable=True
-        ) 
-    return m 
-
-def pseudotime_gene_relative_radio():
-    m = dbc.RadioItems(
-        id="pseudotime_gene_relative_radio",
-        options=[
-            {"label": "absolute", "value": "absolute"},
-            {"label": "relative", "value": "relative"}
-        ],
-        value="absolute",
-        )
-    return m
-
-def pseudotime_gene_branch_dropdown():
-    m = dcc.Dropdown(
-        id='pseudotime_gene_branch_dropdown',
-        options=[
-        ],
-        value=None,
-        multi=False,
-        searchable=True,
-        placeholder="(only if calculated previously) choose a pseudotime branch"
-        ) 
-    return m 
-
 
 def clustering_dropdown():
     m = dcc.Dropdown(
@@ -301,11 +205,6 @@ def gene_violin_count():
 
 def gene_UMAP_count():
     m = dbc.Badge(id="gene_UMAP_count", children=["# cells selected: 0"],
-                  className="ml-1")
-    return m
-
-def pseudotime_UMAP_count():
-    m = dbc.Badge(id="pseudotime_UMAP_count", children=["# cells selected: 0"],
                   className="ml-1")
     return m
 

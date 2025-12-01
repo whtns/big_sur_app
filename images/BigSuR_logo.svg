@@ -15,8 +15,8 @@
    version="1.1"
    id="svg1351"
    inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   sodipodi:docname="MiCV_logo.svg"
-   inkscape:export-filename="/home/nigelmic/data/programming/dash/scanpy/images/MiCV_logo.png"
+   sodipodi:docname="BigSuR_logo.svg"
+   inkscape:export-filename="/home/nigelmic/data/programming/dash/scanpy/images/BigSuR_logo.png"
    inkscape:export-xdpi="150"
    inkscape:export-ydpi="150">
   <defs
@@ -628,5 +628,5 @@
            y="32.272232"
            style="fill:#353535;fill-opacity:1;stroke:none" /></flowRegion><flowPara
          id="flowPara2311"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:400px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start">MiCV</flowPara></flowRoot>  </g>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:400px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start">BigSuR</flowPara></flowRoot>  </g>
 </svg>

@@ -9,7 +9,7 @@ however it leads to a circular import of the cache function which leads
 to failure to load the app.
 
 '''
-user_dataset_path  = "/srv/www/MiCV/user_datasets/"
+user_dataset_path  = "/Library/WebServer/Documents/BigSuR/user_datasets/"
 
 def get_dataset_list(username):
     dataset_path = user_dataset_path + str(username) + "/"

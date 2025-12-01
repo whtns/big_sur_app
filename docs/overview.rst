@@ -3,7 +3,7 @@
 Overview of scRNA-seq workflows
 ================================
 
-Analysis of data from single-cell RNA-seq is a large and rapidly-maturing field. Though many different pipelines exist for taking scRNA-seq data and extracting actionable information it, we hope that this guide can serve as a summary of the most critical components to be aware of as researchers consider analyzing their data with MiCV. In the overview diagram we depict the flow of operations that nearly all scRNA-seq pipelines have in common. 
+Analysis of data from single-cell RNA-seq is a large and rapidly-maturing field. Though many different pipelines exist for taking scRNA-seq data and extracting actionable information it, we hope that this guide can serve as a summary of the most critical components to be aware of as researchers consider analyzing their data with BigSuR. In the overview diagram we depict the flow of operations that nearly all scRNA-seq pipelines have in common. 
 
 .. image:: images/workflow_overview.png
   :width: 1500

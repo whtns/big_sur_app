@@ -6,6 +6,7 @@ from numcodecs import Blosc
 import scipy.sparse as sp
 
 from .celery import task_queue
+from filelock import FileLock
 from layouts import demo
 if (demo == False):
     try:
@@ -46,27 +47,30 @@ def send_flask_mail(subject=None, sender=None,
 @task_queue.task
 def write_dense(zarr_cache_dir, key, dense_name, chunk_factors):
     compressor = Blosc(cname='blosclz', clevel=3, shuffle=Blosc.SHUFFLE)
-    store = zarr.open(zarr_cache_dir, mode='a')
-    
-    if (len(store[key]) == 3):
-        # assume csr sparse matrix - parse as such
-        array_keys = list(store[key].array_keys())
-        X = sp.csr_matrix((store[key + "/" + array_keys[0]], 
-                                  store[key + "/" + array_keys[1]], store[key + "/" + array_keys[2]]))
-    else:
-        # assume dense matrix
-        # TODO: checking for other cases of sparse matrices/mixed groups
-        X = store[key]
-    if ((not (dense_name in store))
-    or  (X.shape != store[dense_name].shape)) :
-        store.create_dataset(dense_name, shape=X.shape,
-                             dtype=X.dtype, fill_value=0, 
-                             chunks=(int(X.shape[0]/chunk_factors[0]), int(X.shape[1]/chunk_factors[1])),
-                             compressor=compressor, overwrite=True)
-    if(sp.issparse(X) is True):
-        X = X.tocoo()
-        store[dense_name].set_coordinate_selection((X.row, X.col), X.data)
-    else:
-        store[dense_name] = X
+    lock_filename = str(zarr_cache_dir) + ".lock"
+    lock = FileLock(lock_filename, timeout=60)
+    with lock:
+        store = zarr.open(zarr_cache_dir, mode='a')
+        if (len(store[key]) == 3):
+            # assume csr sparse matrix - parse as such
+            array_keys = list(store[key].array_keys())
+            X = sp.csr_matrix((store[key + "/" + array_keys[0]], 
+                              store[key + "/" + array_keys[1]], store[key + "/" + array_keys[2]]))
+        else:
+            # assume dense matrix
+            # TODO: checking for other cases of sparse matrices/mixed groups
+            X = store[key]
+
+        if ((not (dense_name in store))
+        or  (X.shape != store[dense_name].shape)) :
+            store.create_dataset(dense_name, shape=X.shape,
+                                 dtype=X.dtype, fill_value=0, 
+                                 chunks=(int(X.shape[0]/chunk_factors[0]), int(X.shape[1]/chunk_factors[1])),
+                                 compressor=compressor, overwrite=True)
+        if(sp.issparse(X) is True):
+            X = X.tocoo()
+            store[dense_name].set_coordinate_selection((X.row, X.col), X.data)
+        else:
+            store[dense_name] = X
     return None
 ### end celery queue task function definitions

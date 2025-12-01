@@ -8,16 +8,16 @@ We would really love to see this project grow and get refined over the coming mo
 Easy
 ****
 
-The easiest way to contribute is to simply *use* MiCV as part of your own typical scRNA-seq analysis pipeline and report back to us via email or the issue tracker about:
+The easiest way to contribute is to simply *use* BigSuR as part of your own typical scRNA-seq analysis pipeline and report back to us via email or the issue tracker about:
 
 - What you like
 - What you don't like
 - What features you think would be nice to have
 - What you think are extraneous features
 
-This kind of feedback enables us to make better decisions about where to spend our (small) amount of extra time upgrading and refining MiCV to better suit the most users.
+This kind of feedback enables us to make better decisions about where to spend our (small) amount of extra time upgrading and refining BigSuR to better suit the most users.
 
-In a similar vein, **informative** bug reports are an excellent way to contribute, as they direct our attention to issues we didn't forsee in the design and testing phases of MiCV's development. Informative bug reports, in our eyes, have the following information: 
+In a similar vein, **informative** bug reports are an excellent way to contribute, as they direct our attention to issues we didn't forsee in the design and testing phases of BigSuR's development. Informative bug reports, in our eyes, have the following information: 
 
 - A clear and specific title
 - Some environment details
@@ -42,14 +42,14 @@ This information is really critical to helping track down the issue you've disco
 Medium
 ******
 
-Adding or updating some of documentation for MiCV would be a more advanced way to contribute, and for users new to the collaborative open-source software scene could be a great way to dip your feet into the world of ``git``, as you'll need to:
+Adding or updating some of documentation for BigSuR would be a more advanced way to contribute, and for users new to the collaborative open-source software scene could be a great way to dip your feet into the world of ``git``, as you'll need to:
 
-- Fork the MiCV repository to your github account
-- Clone your fork of the MiCV repository to your computer
+- Fork the BigSuR repository to your github account
+- Clone your fork of the BigSuR repository to your computer
 - Make your changes to the docs (``_.rst`` files)
 - Commit those changes
 - Push those changes up to your own github repository
-- Make a pull request to merge your forked MiCV repository with the main one
+- Make a pull request to merge your forked BigSuR repository with the main one
 
 This process is easier once you've done it a few times, but can be quite daunting for someone just wanting to fix a typo. Nevertheless, if you're feeling up to it, we encourage you to give it a shot and welcome your future pull requests! 
 
@@ -58,4 +58,4 @@ This process is easier once you've done it a few times, but can be quite dauntin
 Hard
 ****
 
-Actually digging into the codebase to help fix some bugs or add in new features can be challenging, but we of course encourage it as well! We've put together a code guide (see: :ref:`code`) that describes some of the basic structure and concepts necessary to dive in, but we know it doesn't cover everything. If there's something in particular you are keen to get included in MiCV, let us know and we can help you get started with your own contribution. 
+Actually digging into the codebase to help fix some bugs or add in new features can be challenging, but we of course encourage it as well! We've put together a code guide (see: :ref:`code`) that describes some of the basic structure and concepts necessary to dive in, but we know it doesn't cover everything. If there's something in particular you are keen to get included in BigSuR, let us know and we can help you get started with your own contribution. 

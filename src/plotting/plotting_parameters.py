@@ -9,6 +9,9 @@ violin_expression_scaleratio = 1.5
 # margins on plots
 margin = {"r": 50, "l": 50, "t": 50, "b": 50}
 
+# default plot height (px) used across the app
+plot_height = 450
+
 # point sizes
 point_line_width_2d = 0.5
 point_line_width_3d = 0.5

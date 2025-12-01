@@ -13,16 +13,111 @@ import numpy as np
 import scipy as sp
 import scanpy as sc
 import anndata as ad
-from anndata._io.zarr import read_dataframe, read_attribute, write_attribute
+# Prefer public anndata I/O. Older code used anndata._io.zarr internals
+# (read_dataframe/read_attribute/write_attribute) which are not stable.
+# Use the public API (`ad.read_zarr`, `AnnData.write_zarr`) instead.
+_ANNDATA_ZARR_INTERNALS = False
 
 from status.status_functions import *
 from plotting.multi_color_scale import MultiColorScale
 
 from tasks.tasks import write_dense
 
-save_analysis_path = "/srv/www/MiCV/cache/"
-selected_datasets_path = "/srv/www/MiCV/selected_datasets/"
-user_dataset_path  = "/srv/www/MiCV/user_datasets/"
+def safe_write_zarr(adata_obj, zarr_cache_dir):
+    """Safely write AnnData to a zarr store.
+
+    Strategy:
+    - Acquire a FileLock on the target store path used by both foreground
+      code and Celery tasks.
+    - Write the AnnData to a temporary zarr directory (atomic replacement).
+    - Rename the temp directory over the target to avoid partial-group races.
+    - If that fails, attempt best-effort cleanup of known conflicting groups
+      (e.g. `X_dense`, `layers_dense`) and retry once.
+    """
+    lock_filename = str(zarr_cache_dir) + ".lock"
+    lock = FileLock(lock_filename, timeout=lock_timeout)
+
+    tmp_dir = None
+    try:
+        with lock:
+            # write to a temp zarr directory then atomically swap
+            ts = int(time.time() * 1000)
+            pid = os.getpid()
+            tmp_dir = f"{zarr_cache_dir}.tmp.{pid}.{ts}"
+            try:
+                # ensure any previous tmp is removed
+                if os.path.exists(tmp_dir):
+                    shutil.rmtree(tmp_dir)
+            except Exception:
+                pass
+
+            try:
+                adata_obj.write_zarr(tmp_dir)
+            except Exception as e:
+                print(f"[WARN] adata.write_zarr to tmp failed: {e}")
+                # fall through to group cleanup fallback below
+                raise
+
+            # At this point tmp_dir is fully written. Replace the target.
+            try:
+                if os.path.exists(zarr_cache_dir):
+                    # remove old store atomically
+                    backup = f"{zarr_cache_dir}.bak.{pid}.{ts}"
+                    try:
+                        if os.path.exists(backup):
+                            shutil.rmtree(backup)
+                    except Exception:
+                        pass
+                    try:
+                        os.rename(zarr_cache_dir, backup)
+                    except Exception:
+                        # fallback to remove
+                        shutil.rmtree(zarr_cache_dir)
+                os.rename(tmp_dir, zarr_cache_dir)
+                # remove backup if present
+                try:
+                    if 'backup' in locals() and os.path.exists(backup):
+                        shutil.rmtree(backup)
+                except Exception:
+                    pass
+                return
+            except Exception as e:
+                print(f"[WARN] atomic replace of zarr store failed: {e}")
+                # try best-effort cleanup of conflicting groups below
+
+    except Exception:
+        # lock context or tmp write failed — fall through to group cleanup
+        pass
+
+    # Fallback: try removing conflicting helper groups then retry write
+    try:
+        store_store = zarr.DirectoryStore(zarr_cache_dir)
+        grp = zarr.open_group(store=store_store, mode='a')
+        removed = False
+        for gname in ["X_dense", "layers_dense"]:
+            if gname in grp:
+                try:
+                    del grp[gname]
+                    print(f"[DEBUG] removed conflicting group {gname} from zarr store")
+                    removed = True
+                except Exception as e2:
+                    print(f"[DEBUG] failed removing {gname}: {e2}")
+        if removed:
+            try:
+                # try writing directly to target now
+                adata_obj.write_zarr(zarr_cache_dir)
+                return
+            except Exception as e3:
+                print(f"[ERROR] adata.write_zarr retry after cleanup failed: {e3}")
+    except Exception as e4:
+        print(f"[DEBUG] opening zarr store for cleanup failed: {e4}")
+
+    # If we reach here, surface an exception
+    raise RuntimeError(f"safe_write_zarr: failed to write zarr to {zarr_cache_dir}")
+
+save_analysis_path = "/Library/WebServer/Documents/BigSuR/cache/"
+selected_datasets_path = "/Library/WebServer/Documents/BigSuR/selected_datasets/"
+user_dataset_path  = "/Library/WebServer/Documents/BigSuR/user_datasets/"
 
 lock_timeout = 60
 
@@ -46,12 +141,8 @@ def generate_adata_from_10X(session_ID, data_type="10X_mtx"):
 
 def load_selected_dataset(session_ID, dataset_key):
     dataset_dict = {
-    "00001": "Michki2020",
-    "00002": "Cocanougher2020",
-    "00003": "Davie2018",
-    "00004": "10X5KPBMC",
-    "00005": "Sharma2020",
-    "00006": "Zeisel2018"
+    "00000": "pbmc3k_raw",
+    "00001": "pbmc3k_processed",
     }
 
     filename = dataset_dict[dataset_key]
@@ -59,18 +150,19 @@ def load_selected_dataset(session_ID, dataset_key):
         return None
     else:
         filename = selected_datasets_path + filename
-
+    print(filename)
     adata = sc.read_h5ad(filename + ".h5ad")
 
     state = {"filename": str(dataset_dict[dataset_key]),
              "# cells/obs": len(adata.obs.index),
              "# genes/var": len(adata.var.index),
-             "# counts": int(np.sum(adata.obs["total_counts"]))}
+             "# counts": int(np.sum(adata.X))}
     cache_state(session_ID, state)
 
     adata = cache_adata(session_ID, adata)
     return adata
 
+import ipdb
 def cache_adata(session_ID, adata=None, group=None,
                 store_dir=None, store_name=None):
     if ((store_dir is None) or (store_name is None)):
@@ -102,33 +194,45 @@ def cache_adata(session_ID, adata=None, group=None,
 
     if (adata is None): # then -> read it from the store
         if (os.path.exists(zarr_cache_dir) is True):
-            store_store = zarr.DirectoryStore(zarr_cache_dir)
-            store = zarr.open_group(store=store_store, mode='r')
-            if (group in attribute_groups): # then -> return only that part of the object (fast)
-                group_exists = adata_cache_group_exists(session_ID, group, store=store)
-                if (group_exists is True):
-                    ret = read_attribute(store[group])
-                else:
-                    ret = None
-                #store_store.close()
-                return ret            
-            elif (group is None): # then -> return the whole adata object (slow)
-                #adata = ad.read_zarr(zarr_cache_dir)
-                d = {}
-                for g in attribute_groups:
-                    if (g in store.keys()):
-                        if (adata_cache_group_exists(session_ID, g, store=store)):
-                            if (g in ["obs", "var"]):
-                                d[g] = read_dataframe(store[g])
-                            else:
-                                d[g] = read_attribute(store[g])
-                #store_store.close()
-                adata = ad.AnnData(**d)
-                if not (adata is None):
-                    return adata
-                else:
-                    print("[ERROR] adata object not saved at: " + str(filename))
-                    return None
+            # Use public anndata read API to load the dataset. ad.read_zarr
+            # returns a full AnnData; then return either the requested
+            # attribute group or the whole AnnData.
+            try:
+                adata = ad.read_zarr(zarr_cache_dir)
+            except Exception as e:
+                # Provide diagnostic information to help debug the zarr store
+                print(f"[ERROR] ad.read_zarr failed: {e}")
+                try:
+                    store_store = zarr.DirectoryStore(zarr_cache_dir)
+                    store = zarr.open_group(store=store_store, mode='r')
+                    try:
+                        keys = list(store.group_keys())
+                    except Exception:
+                        try:
+                            keys = list(store.keys())
+                        except Exception:
+                            keys = None
+                    print(f"[DEBUG] zarr store keys: {keys}")
+                except Exception as e2:
+                    print(f"[DEBUG] opening zarr store failed: {e2}")
+                return None
+
+            if (group in attribute_groups):
+                mapping = {
+                    'obs': adata.obs,
+                    'var': adata.var,
+                    'obsm': adata.obsm,
+                    'varm': adata.varm,
+                    'obsp': adata.obsp,
+                    'varp': adata.varp,
+                    'layers': adata.layers,
+                    'X': adata.X,
+                    'uns': adata.uns,
+                    'raw': adata.raw
+                }
+                return mapping.get(group, None)
+            else:
+                return adata
     else: # then -> update the state dictionary and write adata to the store
         if (group is None):
             cache_state(session_ID, key="# cells/obs", val=len(adata.obs.index))
@@ -151,8 +255,80 @@ def cache_adata(session_ID, adata=None, group=None,
                         adata.var.index = pd.Series(adata.var.index).replace(np.nan, 'nanchung')
                         adata.var["gene_ID"] = pd.Series(adata.var["gene_ID"]).replace(np.nan, 'nanchung')
                         adata.var["gene_ids"] = pd.Series(adata.var["gene_ids"]).replace(np.nan, 'nanchung')
-                write_attribute(store, group, adata) # here "adata" is actually just a subset of adata
-                
+                # Write the requested attribute by reading any existing AnnData
+                # and updating the attribute, then writing the full AnnData back
+                # to the zarr store. This avoids reliance on anndata internals.
+                try:
+                    existing = ad.read_zarr(zarr_cache_dir) if os.path.exists(zarr_cache_dir) else None
+                except Exception as e:
+                    print(f"[WARN] ad.read_zarr existing failed: {e}")
+                    try:
+                        store_store = zarr.DirectoryStore(zarr_cache_dir)
+                        store = zarr.open_group(store=store_store, mode='r')
+                        try:
+                            keys = list(store.group_keys())
+                        except Exception:
+                            try:
+                                keys = list(store.keys())
+                            except Exception:
+                                keys = None
+                        print(f"[DEBUG] zarr store keys: {keys}")
+                    except Exception as e2:
+                        print(f"[DEBUG] opening zarr store failed: {e2}")
+                    existing = None
+
+                if existing is None:
+                    existing = ad.AnnData()
+
+                # Try to set only the requested attribute; if that fails,
+                # fall back to writing the full AnnData to avoid index/shape errors.
+                try:
+                    if group == 'obs':
+                        existing.obs = adata if isinstance(adata, pd.DataFrame) else adata.obs
+                    elif group == 'var':
+                        existing.var = adata if isinstance(adata, pd.DataFrame) else adata.var
+                    elif group == 'X':
+                        existing.X = adata
+                    elif group == 'layers':
+                        existing.layers = adata
+                    elif group == 'obsm':
+                        existing.obsm = adata
+                    elif group == 'varm':
+                        existing.varm = adata
+                    elif group == 'obsp':
+                        existing.obsp = adata
+                    elif group == 'varp':
+                        existing.varp = adata
+                    elif group == 'uns':
+                        existing.uns = adata
+                    elif group == 'raw':
+                        existing.raw = adata
+                    safe_write_zarr(existing, zarr_cache_dir)
+                except Exception as e:
+                    print(f"[WARN] group-specific zarr write failed: {e}")
+                    try:
+                        if isinstance(adata, ad.AnnData):
+                            safe_write_zarr(adata, zarr_cache_dir)
+                        else:
+                            fallback = ad.AnnData()
+                            try:
+                                if group == 'obs':
+                                    fallback.obs = adata if isinstance(adata, pd.DataFrame) else adata.obs
+                                elif group == 'var':
+                                    fallback.var = adata if isinstance(adata, pd.DataFrame) else adata.var
+                                elif group == 'X':
+                                    fallback.X = adata
+                                elif group == 'layers':
+                                    fallback.layers = adata
+                            except Exception:
+                                pass
+                            try:
+                                safe_write_zarr(fallback, zarr_cache_dir)
+                            except Exception as e2:
+                                print(f"[ERROR] writing zarr fallback also failed: {e2}")
+                    except Exception as e3:
+                        print(f"[WARN] inner fallback write block failed: {e3}")
+
                 # write dense copies of X or layers if they're what was passed
                 if (group == "X"):
                     dense_name = "X_dense"
@@ -164,8 +340,6 @@ def cache_adata(session_ID, adata=None, group=None,
                         dense_name = "layers_dense/" + str(l)
                         write_dense.delay(zarr_cache_dir, "layers/" + l, 
                                           dense_name, chunk_factors)
-                #store_store.flush()
-                #store_store.close()
                 lock.release()
             else:
                 # check that necessary fields are present in adata object
@@ -188,20 +362,40 @@ def cache_adata(session_ID, adata=None, group=None,
                     adata.var["gene_ID"] = pd.Series(adata.var["gene_ID"]).replace(np.nan, 'nanchung')
                     adata.var["gene_ids"] = pd.Series(adata.var["gene_ids"]).replace(np.nan, 'nanchung')
 
-                # save it all to the cache, but make dense copies of X and layers
-                write_attribute(store, "obs", adata.obs)
-                write_attribute(store, "var", adata.var)
-                write_attribute(store, "obsm", adata.obsm)
-                write_attribute(store, "varm", adata.varm)
-                write_attribute(store, "obsp", adata.obsp)
-                write_attribute(store, "varp", adata.varp)
-                write_attribute(store, "uns", adata.uns)
-                write_attribute(store, "raw", adata.raw)
-                write_attribute(store, "X", adata.X)
-                write_attribute(store, "layers", adata.layers)
+                # Save the whole AnnData using public API. Construct or update
+                # an existing AnnData when needed and write that back to zarr.
+                try:
+                    existing = ad.read_zarr(zarr_cache_dir) if os.path.exists(zarr_cache_dir) else None
+                except Exception:
+                    existing = None
+
+                # Prefer writing the provided full AnnData directly.
+                try:
+                    if isinstance(adata, ad.AnnData):
+                        safe_write_zarr(adata, zarr_cache_dir)
+                    else:
+                        existing = None
+                        try:
+                            existing = ad.read_zarr(zarr_cache_dir) if os.path.exists(zarr_cache_dir) else None
+                        except Exception:
+                            existing = None
+                        if existing is None:
+                            existing = ad.AnnData()
+                        # assign attributes where available; guard each assignment
+                        for attr in ['obs','var','obsm','varm','obsp','varp','uns','raw','X','layers']:
+                            if hasattr(adata, attr):
+                                try:
+                                    setattr(existing, attr, getattr(adata, attr))
+                                except Exception:
+                                    pass
+                        try:
+                            safe_write_zarr(existing, zarr_cache_dir)
+                        except Exception as e:
+                            print(f"[ERROR] writing zarr fallback failed: {e}")
+                except Exception as e:
+                    print(f"[ERROR] writing adata.zarr directly failed: {e}")
 
                 # making dense copies of X and layers (compressed to save disk space)
-                
                 dense_name = "X_dense"
                 write_dense.delay(zarr_cache_dir, "X",
                                   dense_name, chunk_factors)
@@ -210,9 +404,7 @@ def cache_adata(session_ID, adata=None, group=None,
                     dense_name = "layers_dense/" + str(l)
                     write_dense.delay(zarr_cache_dir, "layers/" + l, 
                                       dense_name, chunk_factors)
-                
-                #store_store.flush()
-                #store_store.close()
+
                 lock.release()
             # set the file mod and access times to current time
             # then return adata as usual 
@@ -286,13 +478,6 @@ def get_cell_intersection(session_ID, list_of_selections,
             cell_ID = (cell["text"]).rsplit(" ", 1)[-1]
             cell_set.add(cell_ID)
         cell_intersection &= cell_set
-    
-    if ("pseudotime" in obs): 
-        if ((pt_min > 0) or (pt_max < 1)):
-            for cell in list(cell_intersection):
-                if ((obs.loc[cell, "pseudotime"] < pt_min)
-                or  (obs.loc[cell, "pseudotime"] > pt_max)):
-                    cell_intersection.remove(cell)
 
     return cell_intersection
 
@@ -336,22 +521,6 @@ def get_violin_intersection(session_ID, violin_selected):
             points.append(cell)
 
     return {"points": points}
-
-def get_pseudotime_min_max(session_ID, selected):
-    if (selected in ["", 0, None, []]):
-            return [0,1]        
-    
-    x_vals = []
-    for point in selected["points"]:
-        x_vals.append(point["x"])
-
-    if (len(x_vals) == 0):
-        return [0,1]
-
-    x_min = np.min(x_vals)
-    x_max = np.max(x_vals)
-    
-    return [x_min, x_max]
 
 def get_ortholog_data(session_ID, selected_gene):
     filename = (save_analysis_path 
@@ -424,18 +593,48 @@ def get_obs_vector(session_ID, var, layer="X"):
     if (use_zarr is True):
         zarr_cache_dir = save_dir + "adata_cache" + ".zarr"
         if (os.path.exists(zarr_cache_dir) is True):
-            with zarr.LMDBStore(zarr_cache_dir) as store_store:
-                store = zarr.open_group(store=store_store, mode='r')
+            try:
+                adata = ad.read_zarr(zarr_cache_dir)
+            except Exception as e:
+                print(f"[ERROR] get_obs_vector: failed to read zarr: {e}")
+                return None
 
-                if (var in store.obs.keys()):
-                    ret = list(store.obs[var])
+            # prefer obs column if present
+            if var in adata.obs.columns:
+                return list(adata.obs[var])
+
+            # try to find gene index by gene_ID column then var_names
+            idx = None
+            try:
+                if 'gene_ID' in adata.var.columns:
+                    idx = list(adata.var['gene_ID']).index(var)
+            except Exception:
+                idx = None
+
+            if idx is None:
+                try:
+                    idx = list(adata.var_names).index(var)
+                except Exception:
+                    idx = None
+
+            if idx is None:
+                return None
+
+            # extract vector from X or layers
+            try:
+                if layer == 'X':
+                    vec = adata.X[:, idx]
                 else:
-                    idx = list(store.var["gene_ID"]).index(var)
-                    if (layer == "X"):
-                        ret = store["X_dense"][:, idx]
-                    else:
-                        ret = (store["layers_dense"][layer])[:, idx]
-            return ret
+                    vec = adata.layers[layer][:, idx]
+                # convert to list
+                try:
+                    return list(vec)
+                except Exception:
+                    # If sparse matrix
+                    return list(np.asarray(vec).ravel())
+            except Exception as e:
+                print(f"[ERROR] get_obs_vector: failed to extract vector: {e}")
+                return None
 
 def generate_marker_gene_table(session_ID):
     save_dir = save_analysis_path  + str(session_ID) + "/"

@@ -1,5 +1,4 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import dash_bootstrap_components as dbc
 
 def exporting_obs_column_dropdown():
@@ -77,7 +76,7 @@ def save_dataset_input():
 def save_dataset_button():
     m = dbc.Row(children=[
             dbc.Col(children=[
-                dbc.Button("Save dataset to MiCV",
+                dbc.Button("Save dataset to BigSuR",
                             id="save_dataset_button"),
                 dcc.Loading(children=[
                     html.Div(children=[" "],

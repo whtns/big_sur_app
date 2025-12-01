@@ -1,0 +1,11 @@
+[start] debug mode enabled: running app in foreground
+[start] ensuring runtime directories exist: ./run, ./logs
+[start] redis already listening on port 6379
+[start] checking for existing celery pidfiles in ./run
+[start] celery already running according to pidfiles; not starting new workers
+[start] Running web app in foreground for debug
+[start] Logs: ./logs
+Dash is running on http://0.0.0.0:8050/
+
+ * Serving Flask app 'app'
+ * Debug mode: on

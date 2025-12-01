@@ -32,12 +32,23 @@ def preprocess_data(session_ID, adata,
                     min_cells=2, min_genes=200, max_genes=10000,
                     target_sum=1e6, flavor="cell_ranger", 
                     n_top_genes=2000):
-
-
     print("[DEBUG] adata: " + str(adata))
     # do preprocessing
     print("[STATUS] performing QC and normalizing data")
-    
+    # If a `.raw` attribute exists (Scanpy/AnnData raw layer), prefer it for
+    # preprocessing. Guard against missing or malformed `.raw` to avoid crashes.
+    if getattr(adata, "raw", None) is not None:
+        try:
+            adata = adata.raw.to_adata()
+            sc.pp.filter_cells(adata, min_genes=200)
+            sc.pp.filter_genes(adata, min_cells=3)
+            adata.layers['counts'] = adata.X
+            adata.raw = adata.X.copy()
+        except Exception as e:
+            print(f"[WARN] failed to convert adata.raw to AnnData, continuing with original adata: {e}")
+    else:
+        print("[DEBUG] adata.raw not present; using adata as-is for preprocessing")
+
     sc.pp.calculate_qc_metrics(adata, inplace=True)
     cache_history(session_ID, history="Calculated QC metrics")
 

@@ -1,4 +1,5 @@
 import dash
+import ipdb
 
 from flask import Flask
 from flask_mail import Mail
@@ -7,7 +8,7 @@ from flask_security import Security, login_required, \
      SQLAlchemySessionUserDatastore
 from flask_admin import Admin
 from sqlalchemy import exc
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap4
 
 from user_management.database import db_session, init_db
 from user_management.models import User, Role
@@ -30,11 +31,11 @@ security = Security()
 # instantiate the app
 server = Flask(__name__)
 server.config.from_object(FlaskConfig())
-Bootstrap(server)
+Bootstrap4(server)
 
 app = dash.Dash(server=server, show_undo_redo=False,
                 url_base_pathname="/", update_title=None)
-app.title = "MiCV"
+app.title = "BigSuR"
 app.config.suppress_callback_exceptions = True
 
 # Setup cache
@@ -58,13 +59,30 @@ def delay_flask_security_mail(msg):
 		    	              recipients=msg.recipients, body=msg.body,
 		    	              html=msg.html)
 	return None
-security_ctx.send_mail_task(delay_flask_security_mail)
+try:
+	# security.init_app may return None depending on Flask-Security version; use the extension instance
+	# to register the send_mail_task callback to avoid AttributeError
+	target = security_ctx if security_ctx is not None else security
+	target.send_mail_task(delay_flask_security_mail)
+except AttributeError:
+	# If the extension API differs, silently continue (mail will be sent synchronously as fallback)
+	pass
 
 # Create a user to test with
-@server.before_first_request
 def initialize_database():
 	init_db()
 	db_session.commit()
+
+# Register the initialization function in a way that's compatible with
+# Flask 1/2 (`before_first_request`) and Flask 3+ (`before_serving`). If
+# neither hook exists, run initialization immediately as a fallback.
+if hasattr(server, 'before_first_request'):
+	server.before_first_request(initialize_database)
+elif hasattr(server, 'before_serving'):
+	server.before_serving(initialize_database)
+else:
+	# Last-resort: call immediately (useful for some test runners)
+	initialize_database()
 '''
 def create_test_user():
     init_db()

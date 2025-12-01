@@ -1,6 +1,5 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import dash_bootstrap_components as dbc
 
 from . import importing_components as cc
@@ -14,11 +13,12 @@ def importing_layout(demo=False):
 			]),
 			dbc.Row(children=[
 		    	dbc.Col(children=[
-					dbc.CardDeck(children=[
-						cc.importing_dataset_dropdown(),
-						cc.importing_user_dataset_list(demo=demo),
-			        	cc.importing_data_upload(demo=demo),
-		        	]),
+					# CardDeck is deprecated in newer dbc versions — use grid of Columns
+					dbc.Row(children=[
+						dbc.Col(cc.importing_dataset_dropdown(), width=4),
+						dbc.Col(cc.importing_user_dataset_list(demo=demo), width=4),
+						dbc.Col(cc.importing_data_upload(demo=demo), width=4),
+					]),
 			    ])
 			], id="upload-collapse")
 		], fluid=True)

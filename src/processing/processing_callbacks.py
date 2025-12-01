@@ -233,10 +233,6 @@ def refresh_processing_UMAP(all_btn_clicks, proj_btn_clicks,
 
     if (processing_plot_type == "leiden_n"):
         return plot_UMAP(session_ID, "leiden", n_dim=n_dim_proj_plot), "processing successful"
-    elif (processing_plot_type == "pseudotime"):
-        return plot_pseudotime_UMAP(session_ID, "pseudotime"), "processing successful"
-    elif (processing_plot_type == "differentiation potential"):
-        return plot_pseudotime_UMAP(session_ID, "differentiation_potential"), "processing successful"
     elif (processing_plot_type == "total_counts"):
         return plot_expression_UMAP(session_ID, "total_counts", n_dim=n_dim_proj_plot), "processing successful"
     elif (processing_plot_type == "n_genes"):

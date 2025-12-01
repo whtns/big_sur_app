@@ -1,63 +1,79 @@
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html, dcc
 import dash_bootstrap_components as dbc
-import dash_dangerously_set_inner_html
 
 from flask_security import current_user
 
 import uuid
 import base64
+import os
 
 from processing.processing_layouts import *
 from markergenes.markergenes_layouts import *
-from pseudotime.pseudotime_layouts import *
 from annotation.annotation_layouts import *
 from importing.importing_layouts import *
 from exporting.exporting_layouts import *
 from status.status_layouts import *
+from hvg.hvg_layouts import *
 
 demo = False 
 
 def titlebar_layout(demo=False):	
 	# load the logo
-	MiCV_logo_filename = "/srv/www/MiCV/assets/img/MiCV_logo.png"
-	MiCV_logo = base64.b64encode(open(MiCV_logo_filename, 'rb').read())
+	BigSuR_logo_filename = "/Library/WebServer/Documents/BigSuR/assets/img/BigSuR_logo.png"
+	# Read logo only if it exists to avoid import-time crashes on missing files
+	if os.path.exists(BigSuR_logo_filename):
+		try:
+			with open(BigSuR_logo_filename, 'rb') as _f:
+				BigSuR_logo = base64.b64encode(_f.read()).decode()
+			logo_src = f"data:image/png;base64,{BigSuR_logo}"
+		except Exception:
+			logo_src = "assets/img/BigSuR_logo.png"
+	else:
+		# Fall back to the static assets path (or omit the image)
+		logo_src = "assets/img/BigSuR_logo.png"
 
 	if (demo == True):
-		login_logout_link = ""
+		login_logout = html.Span()
 	elif (current_user and current_user.is_authenticated):
-		login_logout_link = '<li class="nav-item" role="presentation"><a class="btn btn-dark text-light" role="button" href="/logout">Logout</a></li>'
+		login_logout = html.A("Logout", href="/logout", className="btn btn-dark text-light", role="button")
 	else:
-		login_logout_link = '<li class="nav-item" role="presentation"><a class="btn btn-dark text-light" role="button" href="/login">Login</a></li>'
+		login_logout = html.A("Login", href="/login", className="btn btn-dark text-light", role="button")
 
-	ret = dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''
-		<nav class="navbar navbar-light navbar-expand-md bg-light" style="font-family: 'Open Sans', sans-serif;">
-        <div class="container-fluid"><a href="/about"><img class="img-fluid" src="assets/img/MiCV_logo.png" width="200" height="200"></a><a class="navbar-brand" href="#"></a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div
-                class="collapse navbar-collapse" id="navcol-1">
-                <ul class="nav navbar-nav">
-                    <li class="nav-item" role="presentation"><a class="nav-link active" href="/about">About</a></li>
-                    <li class="nav-item" role="presentation"></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="/docs">Docs</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="/code">Code</a></li>
-                </ul>
-                <ul class="nav navbar-nav ml-auto">'''
-                + login_logout_link   
-                + '''    
-                </ul>
-        </div>
-        </div>
-    	</nav>
-        ''')
-	
-	return ret
+	# Build navbar using Dash/Bootstrap components instead of raw HTML string
+	return html.Nav(
+		className="navbar navbar-light navbar-expand-md bg-light",
+		style={"fontFamily": "'Open Sans', sans-serif"},
+		children=[
+			html.Div(
+				className="container-fluid",
+				children=[
+						html.A(html.Img(src=logo_src, className="img-fluid", width="200", height="200"), href="/about"),
+					html.A(className="navbar-brand", href="#"),
+					html.Button(html.Span(className="navbar-toggler-icon"), **{"data-toggle": "collapse", "data-target": "#navcol-1", "className": "navbar-toggler"}),
+					html.Div(
+						className="collapse navbar-collapse",
+						id="navcol-1",
+						children=[
+							html.Ul([
+								html.Li(html.A("About", href="/about", className="nav-link active"), className="nav-item"),
+								html.Li("", className="nav-item"),
+								html.Li(html.A("Docs", href="/docs", className="nav-link"), className="nav-item"),
+								html.Li(html.A("Code", href="/code", className="nav-link"), className="nav-item")
+							], className="nav navbar-nav"),
+							html.Ul([html.Li(login_logout, className="nav-item")], className="nav navbar-nav ml-auto")
+						]
+					)
+				]
+			)
+		]
+	)
 
 '''
 	ret = html.Nav(children=[
 			html.A(children=[
-				html.Img(src="data:image/png;base64,{}".format(MiCV_logo.decode()), height="45px"),
+				html.Img(src="data:image/png;base64,{}".format(BigSuR_logo.decode()), height="45px"),
 				html.H3("A Multi-informatic Cellular Visualization tool"),
-			], href="https://micv.works", className="navbar-brand"),
+			], href="https://BigSuR.works", className="navbar-brand"),
 			html.Div(children=[
 				dbc.Nav(children=[
 					(html.A("Logout", href="/logout", className="nav-item nav-link") if (demo is False) else html.A("Login", href="/login", className="nav-item nav-link")),
@@ -106,10 +122,9 @@ def main_layout():
 						
 						### MARKER GENE TAB ###
 						dbc.Tab(markergenes_layout(), label="Marker genes", tab_id="markergenes_tab"),
-
-						### PSEUDOTIME TAB ###
-						dbc.Tab(pseudotime_layout(), label="Pseudotime", tab_id="pseudotime_tab"),
-						
+					
+						### HIGHLY VARIABLE GENES TAB ###
+						dbc.Tab(hvg_layout(), label="Highly Variable Genes", tab_id="hvg_tab"),
 					    ### ANNOTATION TAB ###
 					    dbc.Tab(annotation_layout(), label="Exploration", tab_id="annotation_tab"),
 

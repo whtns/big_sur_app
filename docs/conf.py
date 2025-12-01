@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'MiCV'
+project = 'BigSuR'
 copyright = '2020, Nigel S. Michki'
 author = 'Nigel S. Michki'
 

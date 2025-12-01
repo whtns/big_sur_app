@@ -1,6 +1,5 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 import dash_bootstrap_components as dbc
 
 from . importing_functions import *
@@ -29,12 +28,8 @@ def importing_dataset_dropdown():
                             dcc.Dropdown(
                                 id='importing_dataset_dropdown',
                                 options=[
-                                    {'label': 'Michki et. al. (2020) fly type-II progenies', 'value': "00001"},
-                                    {'label': 'Cocanougher et. al. (2020) whole fly CNS', 'value': "00002"},
-                                    {'label': 'Davie et. al. (2018) aging fly brain', 'value': "00003"},
-                                    {'label': '10Xv3 5K PBMC', 'value': "00004"}, 
-                                    {'label': 'Sharma et. al. (2020) mouse somatosensory neurons', 'value': "00005"},
-                                    {'label': 'Zeisel et. al. (2018) mouse nervous system', 'value': "00006"},
+                                    {'label': 'pbmc3k_raw', 'value': "00000"},
+                                    {'label': 'pbmc3k_processed', 'value': "00000"}
                                 ],
                                 value=None,
                                 placeholder="Select a pre-made dataset",
@@ -96,9 +91,9 @@ def importing_data_upload(demo=False):
                 dbc.Tooltip(
                     '''
                     Currently, only the following datatypes are accepted
-                    for importing into MiCV:
+                    for importing into BigSuR:
 
-                    an h5ad file from MiCV or scanpy, or
+                    an h5ad file from BigSuR or scanpy, or
 
                     a zipped directory, containing the
                     output of 10X Cell Ranger (-style) mapping
@@ -216,7 +211,7 @@ def importing_user_dataset_list(demo=False):
                 '''
                 Use this interface to load or delete previously saved
                 datasets. This will only show datasets saved internally
-                through MiCV's save/export tab, not datasets that were
+                through BigSuR's save/export tab, not datasets that were
                 exported to your computer. Your most recently saved 
                 datasets are listed at the top.
                 ''',
@@ -242,10 +237,16 @@ def importing_user_dataset_list(demo=False):
     return m
 
 def importing_greeting(demo=False):
-    m = dbc.Jumbotron(children=[
-            html.H3("Welcome to the MiCV demo"),
-            html.P("Let's get started.")
-        ])
+    # Replaced deprecated dbc.Jumbotron (removed in dbc v2) with a responsive container
+    m = dbc.Container(
+        children=[
+            dbc.Row(dbc.Col([
+                html.H3("Welcome to the BigSuR demo"),
+                html.P("Let's get started.")
+            ])),
+        ],
+        className="p-4 mb-4 bg-light rounded"
+    )
 
     if (demo is False):
         from flask_security import current_user
@@ -254,11 +255,16 @@ def importing_greeting(demo=False):
         except:
             return m
         
-        m = dbc.Jumbotron(children=[
-            html.H3("Welcome back, " 
-                    + str(current_user.email).split("@",1)[0]),
-            html.P("Let's get started.")
-        ])
+        # Replaced deprecated dbc.Jumbotron with a dbc.Container variant
+        m = dbc.Container(
+            children=[
+                dbc.Row(dbc.Col([
+                    html.H3("Welcome back, " + str(current_user.email).split("@",1)[0]),
+                    html.P("Let's get started.")
+                ])),
+            ],
+            className="p-4 mb-4 bg-light rounded"
+        )
 
     return m
     
