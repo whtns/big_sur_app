@@ -29,7 +29,8 @@ def importing_dataset_dropdown():
                                 id='importing_dataset_dropdown',
                                 options=[
                                     {'label': 'pbmc3k_raw', 'value': "00000"},
-                                    {'label': 'pbmc3k_processed', 'value': "00001"}
+                                    {'label': 'pbmc3k_processed', 'value': "00001"},
+                                    {'label': 'pbmc3k_hvg', 'value': "00002"}
                                 ],
                                 value=None,
                                 placeholder="Select a pre-made dataset",

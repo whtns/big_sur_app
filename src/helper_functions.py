@@ -105,10 +105,43 @@ def load_selected_dataset(session_ID, dataset_key):
     dataset_dict = {
         "00000": "pbmc3k_raw",
         "00001": "pbmc3k_processed",
+        "00002": "pbmc3k_hvg",
     }
     filename = dataset_dict.get(dataset_key)
     if filename is None:
         return None
+
+    # --- New Logic: Try to copy from pre-warmed template cache first ---
+    template_cache_dir = os.path.join(save_analysis_path, f"_template_{filename}", "adata_cache.zarr")
+    session_cache_dir = os.path.join(save_analysis_path, str(session_ID))
+    session_zarr_path = os.path.join(session_cache_dir, "adata_cache.zarr")
+    
+    if os.path.exists(template_cache_dir):
+        print(f"[INFO] Using fast cache copy for '{filename}' for session {session_ID}.")
+        try:
+            # Clean up any existing session cache before copying
+            if os.path.exists(session_cache_dir):
+                shutil.rmtree(session_cache_dir)
+            os.makedirs(session_cache_dir, exist_ok=True)
+            
+            shutil.copytree(template_cache_dir, session_zarr_path)
+            adata = cache_adata(session_ID) # This will now read from the copied Zarr store
+            
+            # Update the state cache as the original loading logic did
+            state = {
+                "filename": filename,
+                "# cells/obs": len(adata.obs.index),
+                "# genes/var": len(adata.var.index),
+                "# counts": int(np.sum(adata.X)),
+            }
+            cache_state(session_ID, state)
+            return adata
+        except Exception as e:
+            print(f"[ERROR] Failed to copy template cache for '{filename}': {e}. Falling back to slow load.")
+            # Fall through to the original loading method if copy fails
+
+    # --- Original Logic: Fallback to slow load from .h5ad file ---
+    print(f"[INFO] Template cache not found for '{filename}'. Performing slow load from .h5ad file.")
     # Try several candidate locations so the app works both on-host and in-container.
     candidates = [
         os.path.join(selected_datasets_path, filename + ".h5ad"),
@@ -600,3 +633,33 @@ def to_rgba_string(rgb_tuple, opacity=1):
         ret += str(c) + ","
     ret += str(opacity) + ")"
     return ret
+
+def prime_adata_cache(name, h5ad_path):
+    """
+    Pre-warms a template cache for a default dataset.
+    This reads the .h5ad file and saves it to a Zarr store in a
+    pre-defined template location. New user sessions can then copy
+    this Zarr store, which is much faster than re-reading the .h5ad.
+    """
+    template_session_id = f"_template_{name}"
+    template_dir = os.path.join(save_analysis_path, template_session_id)
+    
+    # If the cache already exists, don't re-create it
+    if os.path.exists(os.path.join(template_dir, "adata_cache.zarr")):
+        print(f"[INFO] Template cache for '{name}' already exists.")
+        return
+
+    print(f"[INFO] Creating template cache for '{name}' from {h5ad_path}...")
+    try:
+        if not os.path.exists(h5ad_path):
+            print(f"[ERROR] Cannot prime cache: file not found at {h5ad_path}")
+            return
+            
+        adata = get_anndata().read_h5ad(h5ad_path)
+        cache_adata(template_session_id, adata)
+        print(f"[INFO] Successfully created template cache for '{name}'.")
+    except Exception as e:
+        print(f"[ERROR] Failed to prime template cache for '{name}': {e}")
+        # Clean up partial cache directory if it exists
+        if os.path.exists(template_dir):
+            shutil.rmtree(template_dir)

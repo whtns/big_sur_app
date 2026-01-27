@@ -126,18 +126,18 @@ def main_layout():
 		    			### IMPORTING TAB ###
 			        	dbc.Tab(importing_layout(demo=demo), label="Load", 
 			        			tab_id="importing_tab"),
+						
+						### HIGHLY VARIABLE GENES TAB ###
+						dbc.Tab(hvg_layout(), label="Highly Variable Genes", tab_id="hvg_tab"),
+						
+						### CORRELATION NETWORK TAB ###
+						dbc.Tab(correlation_tab_layout(), label="Correlations", tab_id="correlation_tab"),
 
 				    	### PROCESSING TAB ###
 			        	dbc.Tab(processing_layout(demo=demo), label="Preprocess", tab_id="processing_tab"),
 						
 						### MARKER GENE TAB ###
 						dbc.Tab(markergenes_layout(), label="Marker genes", tab_id="markergenes_tab"),
-					
-						### HIGHLY VARIABLE GENES TAB ###
-						dbc.Tab(hvg_layout(), label="Highly Variable Genes", tab_id="hvg_tab"),
-						
-						### CORRELATION NETWORK TAB ###
-						dbc.Tab(correlation_tab_layout(), label="Correlations", tab_id="correlation_tab"),
 						
 					    ### ANNOTATION TAB ###
 					    dbc.Tab(annotation_layout(), label="Exploration", tab_id="annotation_tab"),

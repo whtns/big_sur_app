@@ -12,6 +12,7 @@ from flask_bootstrap import Bootstrap4
 
 from user_management.database import db_session, init_db
 from user_management.models import User, Role
+from helper_functions import prime_adata_cache
 
 from admin.views import AdminView
 
@@ -90,6 +91,14 @@ elif hasattr(server, 'before_serving'):
 else:
 	# Last-resort: call immediately (useful for some test runners)
 	initialize_database()
+
+# Prime the template caches for default datasets on startup
+with server.app_context():
+    print("[INFO] Priming default dataset caches on startup...")
+    prime_adata_cache("pbmc3k_processed", "/app/data/selected_datasets/pbmc3k_processed.h5ad")
+    prime_adata_cache("pbmc3k_hvg", "/app/data/selected_datasets/pbmc3k_hvg.h5ad")
+    print("[INFO] Default dataset caches are ready.")
+
 '''
 def create_test_user():
     init_db()

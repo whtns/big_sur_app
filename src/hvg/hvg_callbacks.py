@@ -1,3 +1,6 @@
+import anndata as ad
+import os
+
 import dash
 from dash import html
 from dash.dependencies import Input, Output, State
@@ -25,36 +28,41 @@ def initial_hvg_load(active_tab, session_ID):
     """
     This callback automatically loads the pre-calculated pbmc3k_hvg.h5ad
     dataset into the current session when the 'Highly Variable Genes' tab
-    is selected for the first time.
+    is selected for the first time, ONLY if no other dataset is loaded.
     """
+    print(f"[DEBUG] initial_hvg_load called: active_tab={active_tab}, session_ID={session_ID}")
+
+    # Only run when the HVG tab is selected
     if active_tab != 'hvg_tab':
         return dash.no_update
 
-    hvg_adata_path = "/app/data/selected_datasets/pbmc3k_hvg.h5ad"
-    
-    # Check if the pre-calculated file exists
-    if not os.path.exists(hvg_adata_path):
-        return dash.no_update
-
-    # Check if a dataset is already in the cache
+    # Check if a dataset is already in the cache for this session
     adata = cache_adata(session_ID)
     if adata is not None:
-        # If the existing dataset is already the hvg one, do nothing
-        if adata.uns.get('hvg_preloaded', False):
-            return dash.no_update
+        print(f"[DEBUG] A dataset is already in cache for session {session_ID}. Skipping default HVG load.")
+        # Trigger recalc_hvgs with existing data, which will force a plot refresh
+        return {'status': 'existing_data'}
 
-    print(f"[{session_ID}] Loading pre-calculated HVG dataset from {hvg_adata_path}")
+    # If no data is cached, load the default pbmc3k_hvg dataset
+    hvg_adata_path = "/app/data/selected_datasets/pbmc3k_hvg.h5ad"
+    print(f"[DEBUG] No dataset in cache. Checking for default HVG file at {hvg_adata_path}")
+    if not os.path.exists(hvg_adata_path):
+        print(f"[DEBUG] Default HVG file not found at {hvg_adata_path}")
+        return dash.no_update
+
+    print(f"[{session_ID}] No dataset loaded. Loading default pre-calculated HVG dataset from {hvg_adata_path}")
     try:
         hvg_adata = ad.read_h5ad(hvg_adata_path)
-        hvg_adata.uns['hvg_preloaded'] = True  # Mark that we've loaded this
+        print(f"[DEBUG] Loaded default AnnData: obs={hvg_adata.n_obs}, var={hvg_adata.n_vars}")
         cache_adata(session_ID, hvg_adata)
-        cache_history(session_ID, history="Loaded pre-calculated HVG dataset (pbmc3k_hvg)")
+        cache_history(session_ID, history="Loaded default pre-calculated HVG dataset (pbmc3k_hvg)")
     except Exception as e:
-        print(f"[{session_ID}] Failed to load pre-calculated HVG dataset: {e}")
+        print(f"[{session_ID}] Failed to load default pre-calculated HVG dataset: {e}")
+        import traceback; traceback.print_exc()
         return dash.no_update
-    
-    # Return a value to signify completion, though it's not used.
-    return {'status': 'loaded'}
+
+    print(f"[DEBUG] Default HVG dataset loaded and cached for session {session_ID}")
+    return {'status': 'loaded_default'}
 
 
 @app.callback(
@@ -63,47 +71,51 @@ def initial_hvg_load(active_tab, session_ID):
     [State('session-id', 'children'), State('mcfano_cutoff', 'value'), State('pvalue_cutoff', 'value'), State('hvg_max_points', 'value'), State('default_mcfano_cutoff', 'value'), State('default_pvalue_cutoff', 'value')]
 )
 def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj_plot, umap_select, session_ID, mcfano_cutoff, pvalue_cutoff, hvg_max_points, default_mcfano_cutoff, default_pvalue_cutoff):
-    # This callback is triggered both by the Recalculate HVGs button and by
-    # UMAP selection controls. If nothing has been clicked and controls are
-    # uninitialized, bail out.
     ctx = dash.callback_context
+    print(f"[DEBUG] recalc_hvgs called: triggered={ctx.triggered}, session_ID={session_ID}")
     if not ctx.triggered:
+        print("[DEBUG] No trigger, returning no update.")
         return dash.no_update, dash.no_update, dash.no_update
 
+    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
     adata = cache_adata(session_ID)
+    print(f"[DEBUG] cache_adata in recalc_hvgs: {type(adata)}")
     if adata is None:
+        print("[DEBUG] No AnnData in cache for session.")
         return "", "No dataset cached for this session", {}
 
+    # Define a default keys dictionary to use if we skip recalculation
+    keys = {
+        "umap_default_key": "X_umap_default_cutoffs",
+        "leiden_default_key": "leiden_default_cutoffs",
+        "umap_user_key": "X_umap_user_cutoffs",
+        "leiden_user_key": "leiden_user_cutoffs",
+    }
+
     try:
-        mcfano_cutoff = float(mcfano_cutoff) if mcfano_cutoff is not None else 1.0
-        pvalue_cutoff = float(pvalue_cutoff) if pvalue_cutoff is not None else 0.05
+        # Check if the trigger is the initial load and if data is pre-calculated
+        recalculate = True
+        if trigger_id == 'hvg-initial-load-trigger':
+            required_var = 'highly_variable_user' in adata.var.columns
+            required_obsm = 'X_umap_user_cutoffs' in adata.obsm
+            if required_var and required_obsm:
+                print("[DEBUG] Pre-calculated HVG data found in AnnData. Skipping recalculation.")
+                recalculate = False
 
-        # Ensure raw counts layer exists for mcFano (some adata may not have been preprocessed)
-        try:
+        if recalculate:
+            print("[DEBUG] Recalculating HVGs based on UI controls.")
+            mcfano_cutoff = float(mcfano_cutoff) if mcfano_cutoff is not None else 1.0
+            pvalue_cutoff = float(pvalue_cutoff) if pvalue_cutoff is not None else 0.05
+            print(f"[DEBUG] Using mcfano_cutoff={mcfano_cutoff}, pvalue_cutoff={pvalue_cutoff}")
+
+            # Ensure raw counts layer exists for mcFano
             if 'counts' not in getattr(adata, 'layers', {}):
-                try:
-                    adata.layers['counts'] = adata.X.copy()
-                except Exception:
-                    # last-ditch: convert to dense then copy
-                    try:
-                        adata.layers['counts'] = adata.X.A.copy() if hasattr(adata.X, 'A') else np.asarray(adata.X).copy()
-                    except Exception:
-                        pass
-        except Exception:
-            # ignore layering failures; the called function will raise a clearer error
-            pass
+                print("[DEBUG] 'counts' layer missing, copying .X to .layers['counts']")
+                adata.layers['counts'] = adata.X.copy()
 
-        # Run mcFano selection and user/default masks + reductions
-        try:
-            # coerce default cutoff
-            try:
-                default_mcFano = float(default_mcfano_cutoff) if default_mcfano_cutoff is not None else 0.9
-            except Exception:
-                default_mcFano = 0.9
-            try:
-                default_pval = float(default_pvalue_cutoff) if default_pvalue_cutoff is not None else 0.05
-            except Exception:
-                default_pval = 0.05
+            # Run mcFano selection and reductions
+            default_mcFano = float(default_mcfano_cutoff) if default_mcfano_cutoff is not None else 0.9
+            default_pval = float(default_pvalue_cutoff) if default_pvalue_cutoff is not None else 0.05
             adata, keys = apply_feature_selection_and_reductions(
                 adata,
                 mcfano_cutoff=mcfano_cutoff,
@@ -112,37 +124,24 @@ def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj
                 default_pvalue_threshold=default_pval,
                 cacache=None,
             )
-        except Exception as e:
-            tb = traceback.format_exc()
-            # include available layer/obs/var keys to help debugging
-            layers = list(getattr(adata, 'layers', {}).keys()) if adata is not None else []
-            obs_cols = list(getattr(adata, 'obs', []).columns) if (adata is not None and hasattr(adata, 'obs')) else []
-            var_cols = list(getattr(adata, 'var', []).columns) if (adata is not None and hasattr(adata, 'var')) else []
-            err_msg = f"HVG calculation failed: {e} | layers={layers} | obs_cols={obs_cols[:10]} | var_cols={var_cols[:10]}"
-            print(tb)
-            return "", err_msg, {}
+            print(f"[DEBUG] apply_feature_selection_and_reductions returned keys: {keys}")
+            cache_history(session_ID, history=(f"Recalculated HVGs with mcFano={mcfano_cutoff}, p={pvalue_cutoff}"))
+            cache_adata(session_ID, adata)
+        
+        # --- Plotting logic (runs for both pre-calculated and recalculated data) ---
 
-        cache_history(session_ID, history=(f"Selected HVGs via mcFano cutoff={mcfano_cutoff}, p={pvalue_cutoff}"))
-        cache_adata(session_ID, adata)
-
-        # get user-selected HVGs
         hvgs = []
         if 'highly_variable_user' in adata.var.columns:
             hvgs = list(adata.var[adata.var['highly_variable_user']].index)
+        print(f"[DEBUG] Found {len(hvgs)} HVGs to display.")
 
-        if len(hvgs) == 0:
-            hvg_list = html.Div("No HVGs found with these cutoffs")
-        else:
-            items = [html.Li(g) for g in hvgs]
-            hvg_list = html.Ul(items)
+        hvg_list = html.Ul([html.Li(g) for g in hvgs]) if hvgs else html.Div("No HVGs found.")
 
-        # Decide which UMAP keys to use
-        default_key = keys.get('umap_default_key') if keys else None
-        user_key = keys.get('umap_user_key') if keys else None
-        # pick requested UMAP (preference: chosen, then fallback)
+        default_key = keys.get('umap_default_key')
+        user_key = keys.get('umap_user_key')
         chosen_key = user_key if umap_select == 'user' else default_key
+        print(f"[DEBUG] UMAP keys for plotting: default={default_key}, user={user_key}, chosen={chosen_key}")
 
-        # Build a two-panel Plotly subplot (Default | User) UMAP for comparison
         try:
             def _sample_idx(n, max_points):
                 try:
@@ -155,11 +154,13 @@ def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj
                 return rng.choice(n, size=max_points, replace=False)
             def get_coords_and_clusters(u_key, l_key):
                 if (u_key is None) or (u_key not in adata.obsm):
+                    print(f"[DEBUG] UMAP key {u_key} not in adata.obsm")
                     return None, None
                 coords = np.asarray(adata.obsm[u_key])
                 if coords.ndim == 1:
                     coords = coords.reshape(-1, 1)
                 if coords.ndim != 2:
+                    print(f"[DEBUG] UMAP coords for {u_key} not 2D")
                     return None, None
                 if coords.shape[1] < 2:
                     coords = np.hstack([coords, np.zeros((coords.shape[0], 1))])
@@ -179,16 +180,14 @@ def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj
 
             def add_panel(col, coords, clusters, title):
                 if coords is None:
-                    # annotate empty panel
+                    print(f"[DEBUG] No UMAP available for panel {col} ({title})")
                     fig.add_annotation(text="No UMAP available", xref="paper", yref="paper",
                                        x=0.25 if col == 1 else 0.75, y=0.5, showarrow=False)
                     return
-                # apply downsampling for performance
                 idx = _sample_idx(coords.shape[0], hvg_max_points)
                 sampled_coords = coords[idx]
                 df = pd.DataFrame({'x': sampled_coords[:, 0], 'y': sampled_coords[:, 1]})
                 if clusters is not None:
-                    # clusters may be a pandas Series; get sampled cluster values
                     cluster_vals = clusters.values[idx] if hasattr(clusters, 'values') else np.asarray(clusters)[idx]
                     unique = list(pd.Series(cluster_vals).unique())
                     for u in unique:
@@ -203,25 +202,21 @@ def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj
             add_panel(2, coords_user, clusters_user, 'User')
 
             fig.update_layout(height=plot_height, showlegend=True, autosize=False)
-        except Exception:
+        except Exception as e:
+            print(f"[DEBUG] Exception while building UMAP plots: {e}")
             fig = {'data': [], 'layout': {'height': plot_height, 'autosize': False}}
 
-        # If the user requested a specific display type (clusters or expression),
-        # allow the user selection in `processing_plot_type` to override the two-panel view.
         try:
             if processing_plot_type in ['leiden_n']:
-                # return the cluster plot for the chosen UMAP selection
                 coords, clusters = get_coords_and_clusters(chosen_key, user_leiden if umap_select == 'user' else default_leiden)
                 if coords is None:
+                    print(f"[DEBUG] No coords for chosen UMAP {chosen_key}")
                     return hvg_list, f"Selected {len(hvgs)} HVGs (user mask)", fig
-                # build a single-panel figure similar to plot_UMAP with downsampling
                 traces = []
                 obs = adata.obs
-                # sample indices first
                 idx = _sample_idx(coords.shape[0], hvg_max_points)
                 sampled_coords = coords[idx]
                 sampled_obs = obs.iloc[idx]
-                # iterate cluster labels present in sampled_obs
                 for i, val in enumerate(sorted(sampled_obs['leiden_n'].unique())):
                     mask = sampled_obs['leiden_n'] == val
                     b = sampled_coords[mask.values]
@@ -229,12 +224,11 @@ def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj
                 single_fig = {'data': traces, 'layout': dict(xaxis={'title': 'UMAP 1'}, yaxis={'title': 'UMAP 2'}, margin=margin, hovermode='closest', height=plot_height, autosize=False)}
                 return hvg_list, f"Selected {len(hvgs)} HVGs (user mask)", single_fig
             elif processing_plot_type in ['total_counts', 'log1p_total_counts', 'n_genes']:
-                # expression plot on chosen UMAP
                 coords, clusters = get_coords_and_clusters(chosen_key, None)
                 if coords is None:
+                    print(f"[DEBUG] No coords for chosen UMAP {chosen_key}")
                     return hvg_list, f"Selected {len(hvgs)} HVGs (user mask)", fig
                 selected_gene = processing_plot_type
-                # get expression vector; prefer obs column, otherwise use obs_vector
                 values = None
                 if selected_gene in adata.obs.columns:
                     values = adata.obs[selected_gene].values
@@ -243,17 +237,20 @@ def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj
                         values = adata.obs_vector(selected_gene)
                     except Exception:
                         values = None
-                # sample indices
                 idx = _sample_idx(coords.shape[0], hvg_max_points)
                 df = pd.DataFrame({'x': coords[idx, 0], 'y': coords[idx, 1], 'val': values[idx] if values is not None else None})
                 trace = go.Scattergl(x=df['x'], y=df['y'], mode='markers', marker={'size': point_size_2d, 'color': df['val'], 'colorscale': 'viridis', 'colorbar': dict(title=str(selected_gene))})
                 single_fig = {'data': [trace], 'layout': dict(xaxis={'title': 'UMAP 1'}, yaxis={'title': 'UMAP 2'}, margin=margin, hovermode='closest', height=plot_height, autosize=False)}
                 return hvg_list, f"Selected {len(hvgs)} HVGs (user mask)", single_fig
-        except Exception:
+        except Exception as e:
+            print(f"[DEBUG] Exception while building single-panel plot: {e}")
             pass
 
         status = f"Selected {len(hvgs)} HVGs (user mask)"
+        print(f"[DEBUG] Returning status: {status}")
         return hvg_list, status, fig
 
     except Exception as e:
+        print(f"[DEBUG] Exception in recalc_hvgs: {e}")
+        import traceback; traceback.print_exc()
         return "", f"HVG calculation failed: {e}", {}
