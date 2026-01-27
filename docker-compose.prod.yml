@@ -1,0 +1,81 @@
+# Production docker-compose configuration
+# Run with: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+version: '3.8'
+
+services:
+  redis:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  celery-worker:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    # Production: scale to multiple workers
+    # Run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --scale celery-worker=3
+
+  web:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '1'
+          memory: 512M
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - FLASK_ENV=production
+    command: >
+      python -m gunicorn 
+      --pythonpath src 
+      -w 8 
+      -b 0.0.0.0:8050 
+      --access-logfile ./logs/gunicorn-access.log 
+      --error-logfile ./logs/gunicorn-error.log 
+      --timeout 120 
+      --keep-alive 5
+      index:server
+
+  # Optional: Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    container_name: bigsur-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment for SSL
+      # - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - web
+    networks:
+      - bigsur-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M

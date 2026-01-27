@@ -1,3 +1,8 @@
+import os
+# Ensure Numba JIT is disabled early to avoid llvmlite JIT/runtime
+# initialization before Gunicorn forks workers.
+os.environ.setdefault('NUMBA_DISABLE_JIT', '1')
+
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
@@ -21,6 +26,10 @@ from importing import importing_callbacks
 from exporting import exporting_callbacks
 from status import status_callbacks
 from hvg import hvg_callbacks
+from correlations.correlation_callbacks import register_correlation_callbacks
+
+# Register correlation callbacks
+register_correlation_callbacks(app)
 
 server = app.server
 

@@ -214,6 +214,5 @@ def clustering_UMAP_count():
     return m
 
 def total_cell_count():
-    m = html.Div(id="total_cell_count", children=[0],
-                 style={"display": "none"})
+    m = dcc.Store(id="total_cell_count", data=0)
     return m

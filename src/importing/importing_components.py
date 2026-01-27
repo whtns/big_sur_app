@@ -29,7 +29,7 @@ def importing_dataset_dropdown():
                                 id='importing_dataset_dropdown',
                                 options=[
                                     {'label': 'pbmc3k_raw', 'value': "00000"},
-                                    {'label': 'pbmc3k_processed', 'value': "00000"}
+                                    {'label': 'pbmc3k_processed', 'value': "00001"}
                                 ],
                                 value=None,
                                 placeholder="Select a pre-made dataset",
@@ -51,7 +51,7 @@ def importing_dataset_dropdown():
                 dcc.Loading(children=[
                     html.Div(children="", 
                              id='load_selected_dataset_success_output',
-                             style={'margin-top': 10}
+                             style={'marginTop': 10}
                     )
                 ])
             ])
@@ -73,7 +73,7 @@ def importing_data_upload(demo=False):
             '''
             )
         ])
-    ], style={"background-color": "rgba(0, 0, 0, 0.15)"})
+    ], style={"backgroundColor": "rgba(0, 0, 0, 0.15)"})
     
     if (demo is True):    
         return m
@@ -133,7 +133,7 @@ def importing_data_upload(demo=False):
                 dcc.Loading(children=[
                     html.Div(children="", 
                              id='upload_raw_data_success_output',
-                             style={'margin-top': 10}
+                             style={'marginTop': 10}
                     )
                 ])
             ])
@@ -155,7 +155,7 @@ def importing_user_dataset_list(demo=False):
             '''
             )
         ])
-    ], style={"background-color": "rgba(0, 0, 0, 0.15)"})
+    ], style={"backgroundColor": "rgba(0, 0, 0, 0.15)"})
     
     if (demo is True):
         return m
@@ -229,7 +229,7 @@ def importing_user_dataset_list(demo=False):
                 dcc.Loading(children=[
                     html.Div(children="", 
                              id='importing_user_dataset_success_output',
-                             style={'margin-top': 10}
+                             style={'marginTop': 10}
                     )
                 ])
             ])

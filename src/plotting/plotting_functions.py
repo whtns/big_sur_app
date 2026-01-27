@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 
 import pandas as pd
 import numpy as np
-import anndata as ad
 import seaborn as sns
 
 from scipy.stats import gaussian_kde
@@ -17,6 +16,23 @@ from helper_functions import *
 from plotting.multi_color_scale import MultiColorScale
 from plotting.discrete_color_scales import *
 from plotting.plotting_parameters import *
+from processing.processing_functions import do_PCA, do_neighborhood_graph, do_UMAP
+from helper_functions import get_anndata
+
+
+def _ensure_umap(session_ID, n_neighbors=20, method="standard", random_state=0):
+    """Regenerate UMAP embeddings if missing by rerunning PCA → neighbors → UMAP."""
+    adata = cache_adata(session_ID)
+    if adata is None:
+        return None
+    try:
+        adata = do_PCA(session_ID, adata, random_state=random_state)
+        adata = do_neighborhood_graph(session_ID, adata, method=method, n_neighbors=n_neighbors, random_state=random_state)
+        adata = do_UMAP(session_ID, adata, random_state=random_state)
+        return adata
+    except Exception as e:
+        print(f"[ERROR] failed to regenerate UMAP: {e}")
+        return None
 
 
 def plot_UMAP(session_ID, clustering_plot_type, selected_cell_intersection=[], n_dim=2):
@@ -28,15 +44,30 @@ def plot_UMAP(session_ID, clustering_plot_type, selected_cell_intersection=[], n
     if ((adata_cache_group_exists(session_ID, "obs") is False)
     or  (adata_cache_group_exists(session_ID, "obsm") is False)):
         print("[ERROR] obs/obsm for " + str(session_ID) + "does not exist")
-        return dash.no_update
+        regenerated = _ensure_umap(session_ID)
+        if regenerated is None:
+            return dash.no_update
 
     obs  = cache_adata(session_ID, group="obs")
     obsm = cache_adata(session_ID, group="obsm")
 
-    # validate that there is a 3D projection available if that was requested
-    if obsm is None:
-        print(f"[ERROR] obsm is None for session {session_ID}")
+    # ensure obsm with UMAP embeddings is available; if missing, try to regenerate
+    if obsm is None or ("X_umap" not in obsm.keys() and "X_umap_3D" not in obsm.keys()):
+        regenerated = _ensure_umap(session_ID)
+        if regenerated is not None:
+            obsm = regenerated.obsm
+            obs = regenerated.obs
+        else:
+            # fallback: try full load in case partial data exists
+            full_adata = cache_adata(session_ID)
+            if full_adata is not None:
+                obsm = full_adata.obsm
+                obs = full_adata.obs
+    if obsm is None or ("X_umap" not in obsm.keys() and "X_umap_3D" not in obsm.keys()):
+        print(f"[ERROR] obsm lacks UMAP embeddings for session {session_ID}; projection regeneration failed")
         return dash.no_update
+
+    # validate that there is a 3D projection available if that was requested
     if (("X_umap_3D" in obsm.keys()) and (n_dim == 3)):
         coords = pd.DataFrame(obsm["X_umap_3D"], index=obs.index)
     else:
@@ -133,13 +164,23 @@ def plot_expression_UMAP(session_ID, selected_genes, multi="standard", n_dim=2):
         return dash.no_update
 
     adata  = cache_adata(session_ID)
+    if adata is None:
+        regenerated = _ensure_umap(session_ID)
+        if regenerated is None:
+            return dash.no_update
+        adata = regenerated
     obsm   = adata.obsm
     obs    = adata.obs
 
     # validate that there is a 3D projection available if that was requested
     if obsm is None:
-        print(f"[ERROR] adata.obsm is None for session {session_ID}")
-        return dash.no_update
+        regenerated = _ensure_umap(session_ID)
+        if regenerated is None:
+            print(f"[ERROR] adata.obsm is None for session {session_ID}")
+            return dash.no_update
+        adata = regenerated
+        obsm = adata.obsm
+        obs = adata.obs
     if (("X_umap_3D" in obsm.keys()) and (n_dim == 3)):
         coords = pd.DataFrame(obsm["X_umap_3D"], index=obs.index)
     else:

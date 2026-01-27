@@ -6,13 +6,13 @@ import matplotlib.pyplot as plt
 
 import pandas as pd
 import numpy as np
-import anndata as ad
 import seaborn as sns
 
 import base64
 
 from helper_functions import *
 from markergenes import *
+from helper_functions import get_anndata
 
 from plotting.plotting_parameters import scale, min_opacity, max_opacity
 

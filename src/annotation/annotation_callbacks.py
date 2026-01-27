@@ -10,7 +10,7 @@ from app import app
 
 @app.callback(
     [Output("clustering_UMAP_plot", "figure"),
-     Output("total_cell_count", "value")],
+     Output("total_cell_count", "data")],
     [Input("main_tabs", "active_tab"),
      Input("define_cluster_button", "n_clicks"),
      Input("clustering_dropdown", "value"),
@@ -19,11 +19,14 @@ from app import app
     [State("session-id", "children"),
      State("clustering_UMAP_plot", "selectedData")]
 )
-def refresh_clustering_plot(active_tab, 
-                            cluster_btn_clicks, clustering_plot_type, pt_selected,
-                            expr_selected, violin_selected, pt_gene_selected, 
-                            session_ID, clust_selected,  
+def refresh_clustering_plot(active_tab,
+                            cluster_btn_clicks, clustering_plot_type,
+                            expr_selected, violin_selected,
+                            session_ID, clust_selected,
                             adata=None, data_dir=None):
+
+    # normalize input naming to existing code expectations
+    pt_selected = expr_selected
 
     default_return = [dash.no_update, dash.no_update]
     # figure out which button was pressed - what refresh functions to call
@@ -96,20 +99,18 @@ def refresh_clustering_plot(active_tab,
     elif(button_id in ["Expression_UMAP_plot",
                        "Violin_gene_plot"]):
         if (pt_selected is None
-        and expr_selected is None
-        and violin_selected is None
-        and pt_gene_selected is None):
-            default_return
+        and violin_selected is None):
+            return default_return
 
 
     # if it's a dropdown menu update - load adata
     elif(button_id == "clustering_dropdown"):
         if (clustering_plot_type in [0, "", None, []]):
-            default_return
+            return default_return
 
     # do nothing if no buttons pressed
     elif(button_id == "not_triggered"):
-        default_return
+        return default_return
 
 
     obs = cache_adata(session_ID, group="obs")
@@ -137,7 +138,7 @@ def refresh_clustering_plot(active_tab,
     Output("clustering_UMAP_count", "children"),
     [Input("clustering_UMAP_plot", "selectedData")],
     [State("session-id", "children"),
-     State("total_cell_count", "value")]
+     State("total_cell_count", "data")]
 )
 def refresh_UMAP_clustering_count(selected_cells, session_ID, n_total_cells):
     if (selected_cells in ["", 0, [], None]):
@@ -218,7 +219,7 @@ def refresh_expression_UMAP_plot(selected_gene, selected_mixed_genes,
     Output("gene_UMAP_count", "children"),
     [Input("expression_UMAP_plot", "selectedData")],
     [State("session-id", "children"),
-     State("total_cell_count", "value")]
+     State("total_cell_count", "data")]
 )
 def refresh_UMAP_gene_count(selected_cells, session_ID, n_total_cells):
     default_return = dash.no_update
@@ -252,7 +253,7 @@ def update_multi_gene_dropdown(active_tab, session_ID):
     Output("gene_violin_count", "children"),
     [Input("violin_gene_plot", "selectedData")],
     [State("session-id", "children"),
-     State("total_cell_count", "value")]
+     State("total_cell_count", "data")]
 )
 def refresh_violin_gene_count(selected_cells, session_ID, n_total_cells):
     if (selected_cells in ["", 0, [], None]):

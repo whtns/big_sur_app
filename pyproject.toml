@@ -1,0 +1,60 @@
+
+[project]
+name = "bigsur-app"
+version = "0.1.0"
+description = "BigSuR: Dash-based web application for scRNA-seq analysis"
+authors = [
+    { name = "Cai Lab at University of Michigan" },
+    { name = "Nigel S. Michki" },
+    { name = "Kevin Stachelek" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "cmake",
+    "redis",
+    "ipdb",
+    "dash==3.3.0",
+    "dash_core_components==2.0.0",
+    "dash_html_components==2.0.0",
+    "dash-bootstrap-components==2.0.4",
+    "dash-dangerously-set-inner-html",
+    "plotly==6.5.0",
+    "flask==3.1.2",
+    "flask_caching==2.3.1",
+    "shortuuid==1.0.13",
+    "bootstrap-flask",
+    "flask-security-too==5.7.0",
+    "email_validator",
+    "flask-sqlalchemy",
+    "bcrypt",
+    "sendgrid",
+    "gunicorn==23.0.0",
+    "gevent==25.9.1",
+    "zarr==2.18.3",
+    "blosc==1.11.3",
+    "filelock==3.20.0",
+    "celery==5.5.3",
+    "scanpy==1.11.5",
+    "umap-learn==0.5.9.post2",
+    "leidenalg==0.11.0",
+    "numba==0.62.1",
+    "palantir==1.4.2",
+    "bbknn==1.6.0",
+    "magic-impute==3.0.0",
+    "pygam==0.11.0",
+    "colour",
+    "flask_mail==0.10.0",
+    "flask_admin==2.0.2",
+    "pandas==2.0.3",
+    "networkx==3.4.2",
+    "python-igraph>=0.11.8",
+    "seaborn==0.13.2",
+    "scipy==1.15.1",
+    "statsmodels>=0.14.5",
+    "numpy==1.24.4"
+]
+
+
+[build-system]
+requires = ["uv>=0.1.36"]
+build-backend = "uv.build"

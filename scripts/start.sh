@@ -30,12 +30,15 @@ is_listening() {
 
 echo "[start] ensuring runtime directories exist: $RUN_DIR, $LOG_DIR"
 
+# Generate redis.conf with absolute paths
+python3 scripts/generate_redis_conf.py
+
 if is_listening $REDIS_PORT; then
   echo "[start] redis already listening on port $REDIS_PORT"
 else
   if command -v redis-server >/dev/null 2>&1; then
-    echo "[start] starting redis-server on port $REDIS_PORT"
-    redis-server --port $REDIS_PORT --dir ./redis_data --logfile "$LOG_DIR/redis.log" --daemonize yes
+    echo "[start] starting redis-server on port $REDIS_PORT with redis.conf"
+    redis-server redis.conf
     sleep 0.5
     if is_listening $REDIS_PORT; then
       echo "[start] redis started"
@@ -47,8 +50,8 @@ else
   fi
 fi
 
-# Start Celery workers (safe with local pidfiles)
 echo "[start] checking for existing celery pidfiles in $RUN_DIR"
+setopt null_glob
 for p in $RUN_DIR/celery-*.pid; do
   if [[ -e "$p" ]]; then
     pid=$(cat "$p" 2>/dev/null || true)

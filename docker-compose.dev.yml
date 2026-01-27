@@ -1,0 +1,30 @@
+# Development docker-compose override
+# Run with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+version: '3.8'
+
+services:
+  web:
+    # Mount source code for live reloading
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./tmp:/app/tmp
+    environment:
+      - DEBUG=1
+      - FLASK_ENV=development
+    # Use Flask dev server instead of Gunicorn for better debugging
+    # Uncomment the line below to use Flask dev server
+    # command: python src/index.py
+
+  celery-worker:
+    environment:
+      - DEBUG=1
+    # For debugging, you can run with single worker and verbose logging
+    # command: celery -A tasks.celery:task_queue worker --loglevel=debug --concurrency=1
+
+  redis:
+    # Expose Redis port to host for manual debugging
+    ports:
+      - "6379:6379"

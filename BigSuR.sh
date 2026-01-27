@@ -3,8 +3,12 @@
 # Usage: ./BigSuR.sh [debug]
 # If run with argument 'debug', the web app runs in foreground via `python src/index.py`.
 
-## Startup the REDIS server
-redis-server &
+## Ensure directories exist and generate redis.conf
+mkdir -p run logs redis_data
+python3 scripts/generate_redis_conf.py
+
+## Startup the REDIS server with config file
+redis-server redis.conf
 
 ## Setup the celery task queue
 PYTHONPATH=./src celery multi start worker0 -A tasks.celery:task_queue &

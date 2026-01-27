@@ -14,23 +14,33 @@ from importing.importing_layouts import *
 from exporting.exporting_layouts import *
 from status.status_layouts import *
 from hvg.hvg_layouts import *
+from correlations.correlation_layouts import correlation_tab_layout
 
 demo = False 
 
 def titlebar_layout(demo=False):	
 	# load the logo
-	BigSuR_logo_filename = "/Library/WebServer/Documents/BigSuR/assets/img/BigSuR_logo.png"
-	# Read logo only if it exists to avoid import-time crashes on missing files
-	if os.path.exists(BigSuR_logo_filename):
-		try:
-			with open(BigSuR_logo_filename, 'rb') as _f:
-				BigSuR_logo = base64.b64encode(_f.read()).decode()
-			logo_src = f"data:image/png;base64,{BigSuR_logo}"
-		except Exception:
-			logo_src = "assets/img/BigSuR_logo.png"
-	else:
-		# Fall back to the static assets path (or omit the image)
-		logo_src = "assets/img/BigSuR_logo.png"
+	# Try multiple paths: production path, development path, assets fallback
+	logo_paths = [
+		"/Library/WebServer/Documents/BigSuR/assets/img/BigSuR_logo.png",
+		"./images/BigSuR_logo.png",
+		"/app/images/BigSuR_logo.png"  # Docker path
+	]
+	
+	logo_src = None
+	for logo_path in logo_paths:
+		if os.path.exists(logo_path):
+			try:
+				with open(logo_path, 'rb') as _f:
+					BigSuR_logo = base64.b64encode(_f.read()).decode()
+				logo_src = f"data:image/png;base64,{BigSuR_logo}"
+				break
+			except Exception:
+				continue
+	
+	# Fall back to assets/images path if file not found
+	if logo_src is None:
+		logo_src = "/assets/BigSuR_logo.png"
 
 	if (demo == True):
 		login_logout = html.Span()
@@ -125,6 +135,10 @@ def main_layout():
 					
 						### HIGHLY VARIABLE GENES TAB ###
 						dbc.Tab(hvg_layout(), label="Highly Variable Genes", tab_id="hvg_tab"),
+						
+						### CORRELATION NETWORK TAB ###
+						dbc.Tab(correlation_tab_layout(), label="Correlations", tab_id="correlation_tab"),
+						
 					    ### ANNOTATION TAB ###
 					    dbc.Tab(annotation_layout(), label="Exploration", tab_id="annotation_tab"),
 

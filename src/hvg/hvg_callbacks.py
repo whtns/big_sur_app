@@ -17,11 +17,52 @@ from utils import check_csr_data_for_int_floats
 
 
 @app.callback(
+    Output('hvg-initial-load-trigger', 'data'),
+    [Input('main_tabs', 'active_tab')],
+    [State('session-id', 'children')]
+)
+def initial_hvg_load(active_tab, session_ID):
+    """
+    This callback automatically loads the pre-calculated pbmc3k_hvg.h5ad
+    dataset into the current session when the 'Highly Variable Genes' tab
+    is selected for the first time.
+    """
+    if active_tab != 'hvg_tab':
+        return dash.no_update
+
+    hvg_adata_path = "/app/data/selected_datasets/pbmc3k_hvg.h5ad"
+    
+    # Check if the pre-calculated file exists
+    if not os.path.exists(hvg_adata_path):
+        return dash.no_update
+
+    # Check if a dataset is already in the cache
+    adata = cache_adata(session_ID)
+    if adata is not None:
+        # If the existing dataset is already the hvg one, do nothing
+        if adata.uns.get('hvg_preloaded', False):
+            return dash.no_update
+
+    print(f"[{session_ID}] Loading pre-calculated HVG dataset from {hvg_adata_path}")
+    try:
+        hvg_adata = ad.read_h5ad(hvg_adata_path)
+        hvg_adata.uns['hvg_preloaded'] = True  # Mark that we've loaded this
+        cache_adata(session_ID, hvg_adata)
+        cache_history(session_ID, history="Loaded pre-calculated HVG dataset (pbmc3k_hvg)")
+    except Exception as e:
+        print(f"[{session_ID}] Failed to load pre-calculated HVG dataset: {e}")
+        return dash.no_update
+    
+    # Return a value to signify completion, though it's not used.
+    return {'status': 'loaded'}
+
+
+@app.callback(
     [Output('hvg_list', 'children'), Output('hvg_status', 'children'), Output('hvg_umap_graph', 'figure')],
-    [Input('recalc_hvgs_button', 'n_clicks'), Input('hvg_UMAP_dropdown', 'value'), Input('hvg_n_dims_radio', 'value'), Input('hvg_umap_select', 'value')],
+    [Input('hvg-initial-load-trigger', 'data'), Input('recalc_hvgs_button', 'n_clicks'), Input('hvg_UMAP_dropdown', 'value'), Input('hvg_n_dims_radio', 'value'), Input('hvg_umap_select', 'value')],
     [State('session-id', 'children'), State('mcfano_cutoff', 'value'), State('pvalue_cutoff', 'value'), State('hvg_max_points', 'value'), State('default_mcfano_cutoff', 'value'), State('default_pvalue_cutoff', 'value')]
 )
-def recalc_hvgs(n_clicks, processing_plot_type, n_dim_proj_plot, umap_select, session_ID, mcfano_cutoff, pvalue_cutoff, hvg_max_points, default_mcfano_cutoff, default_pvalue_cutoff):
+def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj_plot, umap_select, session_ID, mcfano_cutoff, pvalue_cutoff, hvg_max_points, default_mcfano_cutoff, default_pvalue_cutoff):
     # This callback is triggered both by the Recalculate HVGs button and by
     # UMAP selection controls. If nothing has been clicked and controls are
     # uninitialized, bail out.

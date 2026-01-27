@@ -1,2 +1,58 @@
 .git
 cache
+
+# Exclude large data files - mount as volumes instead
+data/
+
+# Version control
+.gitignore
+.github
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs and databases
+logs/
+run/
+*.log
+*.db
+dump.rdb
+redis_data/
+
+# Dependencies
+node_modules/
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+docs/_build/
+
+# Testing
+.coverage
+.tox/
+
+# Other
+tmp/
+*.tmp
+.env.local

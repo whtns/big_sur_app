@@ -1,8 +1,10 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('sqlite:////Library/WebServer/Documents/BigSuR/databases/misc.db')
+DEFAULT_DB = os.environ.get('DATABASE_URI', 'sqlite:////app/data/misc.db')
+engine = create_engine(DEFAULT_DB)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))

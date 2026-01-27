@@ -21,15 +21,24 @@ from typing import Dict, Optional, Sequence, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scanpy as sc
 import seaborn as sns
 import ipdb
 from utils import check_csr_data_for_int_floats
 
-# imports for BigSur feature selection
-from BigSur.feature_selection import mcfano_feature_selection
-import sys
-from BigSur.correlations import calculate_correlations
+# imports for BigSur feature selection (optional - external package)
+try:
+    from BigSur.feature_selection import mcfano_feature_selection
+except Exception:
+    def mcfano_feature_selection(*args, **kwargs):
+        raise ImportError(
+            "BigSur.feature_selection.mcfano_feature_selection is not available.\n"
+            "Install the BigSur package or provide a local implementation to enable mcFano feature selection."
+        )
+
+try:
+    from BigSur.correlations import calculate_correlations
+except Exception:
+    calculate_correlations = None
 
 __all__ = [
     "load_10x_h5",
@@ -47,6 +56,8 @@ def load_10x_h5(path: str):
     """
     if not os.path.exists(path):
         raise FileNotFoundError(path)
+    from helper_functions import get_scanpy
+    sc = get_scanpy()
     adata = sc.read_10x_h5(path)
     adata.var_names_make_unique()
     return adata
@@ -55,6 +66,8 @@ def load_10x_h5(path: str):
 def process_adata(adata, min_genes: int = 400, min_cells: int = 3):
     """Basic preprocessing: filter cells/genes, copy counts layer, normalize and log1p."""
     adata.var_names_make_unique()
+    from helper_functions import get_scanpy
+    sc = get_scanpy()
     sc.pp.filter_cells(adata, min_genes=min_genes)
     sc.pp.filter_genes(adata, min_cells=min_cells)
     # ensure layers exists and save raw counts
@@ -89,6 +102,8 @@ def apply_feature_selection_and_reductions(
     Modifies `adata` in-place. Returns the adata and a small dict of keys used.
     `cacache` is an optional dict used to store default mask per-file-id (mirrors Shiny session cache).
     """
+    from helper_functions import get_scanpy
+    sc = get_scanpy()
     if cacache is None:
         cacache = {}
     
@@ -97,16 +112,25 @@ def apply_feature_selection_and_reductions(
             adata = adata.raw.to_adata()
             sc.pp.filter_cells(adata, min_genes=200)
             sc.pp.filter_genes(adata, min_cells=3)
-            adata.layers['counts'] = adata.X
+            adata.layers['counts'] = adata.X.copy()
             adata.raw = adata.X.copy()
         except Exception as e:
             print(f"[WARN] failed to convert adata.raw to AnnData, continuing with original adata: {e}")
     else:
-        print("[DEBUG] adata.raw not present; using adata as-is for preprocessing")
+        print("[DEBUG] adata.raw not present; checking for counts layer")
         sc.pp.filter_genes(adata, min_cells=3)
-        if check_csr_data_for_int_floats(adata.X):
-            adata.layers['counts'] = adata.X.astype(np.int32)
-    ipdb.set_trace()
+        # If counts layer doesn't exist or is not raw counts, try to get raw data
+        if 'counts' not in adata.layers:
+            print("[DEBUG] No counts layer found, checking if X contains raw counts")
+            if check_csr_data_for_int_floats(adata.X):
+                print("[DEBUG] X appears to be raw counts, saving to counts layer")
+                adata.layers['counts'] = adata.X.copy()
+            else:
+                print("[WARN] X does not appear to be raw counts, cannot proceed with mcFano")
+                raise ValueError("Raw counts not available. Please ensure 'counts' layer exists with unnormalized data.")
+        else:
+            print("[DEBUG] Using existing counts layer for feature selection")
+    # ipdb.set_trace()
     # run mcFano-based feature selection (expected to populate adata.var['mc_Fano'] and 'FDR_adj_pvalue')
     mcfano_feature_selection(adata, layer="counts", min_mcfano_cutoff = mcfano_cutoff, p_val_cutoff = pvalue_cutoff)
 
@@ -124,6 +148,8 @@ def apply_feature_selection_and_reductions(
         adata.var["highly_variable_default"] = cacache[file_id].copy()
 
     # reductions for default if needed
+    from helper_functions import get_scanpy
+    sc = get_scanpy()
     if adata.var["highly_variable_default"].sum() > 0 and "X_umap_default_cutoffs" not in adata.obsm:
         sc.pp.pca(
             adata,

@@ -214,6 +214,10 @@ def refresh_processing_UMAP(all_btn_clicks, proj_btn_clicks,
         
         default_return[1] = "Processing successful"
 
+        # ensure we have a plot type selected after full recompute
+        if (processing_plot_type in [0, "", None, []]):
+            processing_plot_type = "leiden_n"
+
     # if it's a dropdown menu update - load adata
     elif(button_id == "processing_UMAP_dropdown"
       or button_id == "n_dims_processing_radio"):

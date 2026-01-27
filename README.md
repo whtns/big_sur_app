@@ -1,4 +1,4 @@
- <img src="https://github.com/Cai-Lab-at-University-of-Michigan/BigSuR/blob/master/images/BigSuR_logo.png" width="500" height="140">
+ <img src="https://raw.githubusercontent.com/Cai-Lab-at-University-of-Michigan/BigSuR/master/images/BigSuR_logo.png" width="500" height="140">
 
 
 ## About

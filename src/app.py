@@ -28,8 +28,10 @@ else:
 
 security = Security()
 
-# instantiate the app
-server = Flask(__name__)
+# instantiate the app with static file paths
+import os
+static_path = os.path.join(os.path.dirname(__file__), 'assets')
+server = Flask(__name__, static_url_path='/assets', static_folder=static_path)
 server.config.from_object(FlaskConfig())
 Bootstrap4(server)
 
@@ -39,11 +41,16 @@ app.title = "BigSuR"
 app.config.suppress_callback_exceptions = True
 
 # Setup cache
+import os
+
+# Configure Redis URL for Flask-Caching from environment, default to compose service
+redis_url = os.environ.get('CACHE_REDIS_URL', os.environ.get('REDIS_URL', 'redis://redis:6379/0'))
 cache = Cache(app.server, config={
-    'CACHE_TYPE': 'redis',
-    'CACHE_THRESHOLD': 200,  # should be set to max number of active users
-    "CACHE_DEFAULT_TIMEOUT": 30000
-    }
+	'CACHE_TYPE': 'redis',
+	'CACHE_REDIS_URL': redis_url,
+	'CACHE_THRESHOLD': 200,  # should be set to max number of active users
+	"CACHE_DEFAULT_TIMEOUT": 30000
+	}
 )
 
 # Setup Flask-Security

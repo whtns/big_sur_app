@@ -5,7 +5,9 @@ from . import annotation_components as cc #custom components
 
 def annotation_layout():
 	m = dbc.Tab(label='Annotation', children=[ 
-		    	dbc.Col(children=[
+	    	# hidden container to store total cell count for callbacks
+	    	cc.total_cell_count(),
+	    	dbc.Col(children=[
 		    		html.H3(children="Data exploration and expert annotation"),
 					html.P(
 						'''
@@ -61,12 +63,15 @@ def annotation_layout():
 					    				 hidden=True,
 					    				 id="mixed_expression_legend_image",
 					    				 style={"display": "flex",
-												"justify-content": "center",
-												"align-items": "center",
+												"justifyContent": "center",
+												"alignItems": "center",
 												"width": "90%"})
 					    	], width=3)
 					    ]),
 					    html.H5(children=[cc.gene_UMAP_count()]),
+			   			html.H3(children="Gene expression violin plot"),
+			   			dcc.Loading(children=[cc.plot_gene_violin()]),
+			   			html.H5(children=[cc.gene_violin_count()]),
 					    html.H3(children="Gene information (fly only)"),
 					    cc.gene_data_table()
 					    ], width=6,

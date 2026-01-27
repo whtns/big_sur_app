@@ -39,7 +39,7 @@ def processing_layout(demo=False):
 				        ]),
 				        dbc.Collapse(children=[
 						    html.Div(id='min_max_genes_slider_output_container',
-						    		 style={'margin-top': 20}),			
+									 style={'marginTop': 20}),           
 						    dcc.RangeSlider(
 						    	id="min_max_genes_slider",
 							    min=0,
@@ -69,7 +69,7 @@ def processing_layout(demo=False):
 							),
 							
 							html.Div(id='min_cells_slider_output_container',
-						    		 style={'margin-top': 20}),
+									 style={'marginTop': 20}),
 						    dcc.Slider(
 						        id="min_cells_slider",
 						        min=1,
@@ -97,7 +97,7 @@ def processing_layout(demo=False):
 							),
 
 							html.Div(id='n_top_genes_slider_output_container',
-						    		 style={'margin-top': 20}),
+									 style={'marginTop': 20}),
 						    dcc.Slider(
 						        id="n_top_genes_slider",
 						        min=100,
@@ -136,7 +136,7 @@ def processing_layout(demo=False):
 
 				        dbc.Collapse(children=[
 							html.Div(id='n_neighbors_slider_output_container',
-						    		 style={'margin-top': 20}),
+									 style={'marginTop': 20}),
 						    dcc.Slider(
 						        id='n_neighbors_slider',
 						        min=1,
@@ -188,7 +188,7 @@ def processing_layout(demo=False):
 				        ]),
 				        dbc.Collapse(children=[
 							html.Div(id='clustering_resolution_slider_output_container',
-						    		 style={'margin-top': 20}),			
+									 style={'marginTop': 20}),           
 						    dcc.Slider(
 						        id="clustering_resolution_slider",
 						        min=0,
@@ -234,11 +234,11 @@ def processing_layout(demo=False):
 				    	(Note that this is optional for pre-made
 				    	datasets, as basic pre-processing has already
 				    	been completed.)
-					''', style={'margin-top': 10}),
+					 ''', style={'marginTop': 10}),
 				    dbc.Button("Recalculate everything", 
 				    			 id="refresh_all_button"),
 				    html.Div(id='refresh_all_status',
-						     style={'margin-top': 10})
+							 style={'marginTop': 10})
 		    	], width=6),
 			]),
 

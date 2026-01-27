@@ -13,7 +13,7 @@ def exporting_layout(demo=False):
 								Download functionality is disabled.
 								'''),
 						], width=6, 
-						style={"background-color": "rgba(0, 0, 0, 0.15)"}),
+						style={"backgroundColor": "rgba(0, 0, 0, 0.15)"}),
 					])
 				])
 

@@ -1,20 +1,17 @@
 import pandas as pd
 import numpy as np
-import anndata as ad
-import scanpy as sc
-sc.settings.autoshow = False
-import scanpy.external as sce
-import palantir
 
 from helper_functions import *
 from status.status_functions import *
+
+from helper_functions import get_scanpy, get_anndata
 
 def downsample_adata(session_ID, adata, pct_cells=100, 
                      pct_counts=100):
     state = cache_state(session_ID)
     n_cells = state["# cells/obs"]
     n_counts = state["# counts"]
-
+    sc = get_scanpy()
     if (pct_counts < 100):
         final_counts = int((pct_counts/100) * n_counts)
         sc.pp.downsample_counts(adata, total_counts=final_counts)
@@ -32,6 +29,7 @@ def preprocess_data(session_ID, adata,
                     min_cells=2, min_genes=200, max_genes=10000,
                     target_sum=1e6, flavor="cell_ranger", 
                     n_top_genes=2000):
+    sc = get_scanpy()
     print("[DEBUG] adata: " + str(adata))
     # do preprocessing
     print("[STATUS] performing QC and normalizing data")
@@ -42,12 +40,15 @@ def preprocess_data(session_ID, adata,
             adata = adata.raw.to_adata()
             sc.pp.filter_cells(adata, min_genes=200)
             sc.pp.filter_genes(adata, min_cells=3)
-            adata.layers['counts'] = adata.X
+            adata.layers['counts'] = adata.X.copy()
             adata.raw = adata.X.copy()
         except Exception as e:
             print(f"[WARN] failed to convert adata.raw to AnnData, continuing with original adata: {e}")
     else:
-        print("[DEBUG] adata.raw not present; using adata as-is for preprocessing")
+        print("[DEBUG] adata.raw not present; saving raw counts before preprocessing")
+        # Save raw counts to layers before any normalization
+        if 'counts' not in adata.layers:
+            adata.layers['counts'] = adata.X.copy()
 
     sc.pp.calculate_qc_metrics(adata, inplace=True)
     cache_history(session_ID, history="Calculated QC metrics")
@@ -63,6 +64,10 @@ def preprocess_data(session_ID, adata,
     sc.pp.filter_genes(adata, min_cells=min_cells)
     cache_history(session_ID, history=("Filtered genes expressed in < " 
                                         + str(min_cells) + " cells"))
+    
+    # Update counts layer after filtering if it was already saved
+    if 'counts' in adata.layers:
+        adata.layers['counts'] = adata.X.copy()
 
     sc.pp.normalize_total(adata, target_sum=target_sum)
     cache_history(session_ID, history=("Normalized total counts to"
@@ -93,6 +98,7 @@ def preprocess_data(session_ID, adata,
 
 def do_PCA(session_ID, adata, n_comps=50, random_state=0):
     print("[STATUS] doing PCA")
+    sc = get_scanpy()
     sc.tl.pca(adata, svd_solver="arpack", 
               n_comps=n_comps, random_state=random_state)
     cache_history(session_ID, history=("Identified " + str(n_comps) 
@@ -103,6 +109,7 @@ def do_PCA(session_ID, adata, n_comps=50, random_state=0):
 def do_neighborhood_graph(session_ID, adata, method="standard",
                           n_neighbors=20, random_state=0):
     print("[STATUS] finding neighbors")
+    sc = get_scanpy()
     if ((method == "standard") or (not ("batch" in adata.obs))):
         sc.pp.neighbors(adata, n_neighbors=n_neighbors, random_state=random_state)
     elif (method == "bbknn"):
@@ -116,6 +123,7 @@ def do_neighborhood_graph(session_ID, adata, method="standard",
 
 def do_UMAP(session_ID, adata, n_dim_proj=2, random_state=0):
     print("[STATUS] doing a 2D UMAP projection")
+    sc = get_scanpy()
     sc.tl.umap(adata, random_state=random_state, 
                init_pos="spectral", n_components=2, 
                copy=False, maxiter=None)
@@ -134,6 +142,7 @@ def do_UMAP(session_ID, adata, n_dim_proj=2, random_state=0):
 def do_clustering(session_ID, adata, resolution=0.5,
                   random_state=0, copy=True):
     print("[STATUS] performing clustering")
+    sc = get_scanpy()
     sc.tl.leiden(adata, resolution=resolution, 
                  random_state=random_state, n_iterations=3)
     cache_history(session_ID, history=("Identified clusters with leiden "
