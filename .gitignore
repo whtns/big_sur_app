@@ -5,3 +5,9 @@ _templates
 dockerfile
 data/
 tmp/
+*.txt
+!requirements.txt
+tcell_correlation_plots_P14*
+*.log
+*.pid
+*.rdb
