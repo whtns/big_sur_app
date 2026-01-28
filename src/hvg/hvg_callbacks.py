@@ -19,6 +19,73 @@ from plotting.plotting_parameters import margin, point_size_2d, plot_height
 from utils import check_csr_data_for_int_floats
 
 
+def _generate_hvg_plots(adata, umap_select, hvg_max_points, keys):
+    """Helper function to generate UMAP plots from an AnnData object."""
+    print("[DEBUG] Inside _generate_hvg_plots function.")
+    try:
+        def _sample_idx(n, max_points):
+            max_points = int(max_points) if max_points is not None else 10000
+            if max_points <= 0 or max_points >= n:
+                return np.arange(n)
+            rng = np.random.default_rng(0)
+            return rng.choice(n, size=max_points, replace=False)
+
+        def get_coords_and_clusters(u_key, l_key):
+            print(f"[DEBUG] Getting coords for UMAP key: {u_key}, Leiden key: {l_key}")
+            if not u_key or u_key not in adata.obsm:
+                print(f"[ERROR] UMAP key '{u_key}' not found in adata.obsm. Available keys: {list(adata.obsm.keys())}")
+                return None, None
+            coords = np.asarray(adata.obsm[u_key])
+            if coords.shape[1] < 2:
+                coords = np.hstack([coords, np.zeros((coords.shape[0], 1))])
+            
+            clusters = None
+            if l_key and l_key in adata.obs.columns:
+                clusters = adata.obs[l_key]
+                print(f"[DEBUG] Found clusters in adata.obs['{l_key}'].")
+            else:
+                print(f"[WARN] Leiden key '{l_key}' not found in adata.obs. Available columns: {list(adata.obs.columns)}")
+
+            return coords[:, :2], clusters
+
+        default_leiden = keys.get("leiden_default_key")
+        user_leiden = keys.get("leiden_user_key")
+        coords_def, clusters_def = get_coords_and_clusters(keys.get("umap_default_key"), default_leiden)
+        coords_user, clusters_user = get_coords_and_clusters(keys.get("umap_user_key"), user_leiden)
+
+        fig = make_subplots(rows=1, cols=2, subplot_titles=["Default-cutoff UMAP", "User-cutoff UMAP"])
+
+        def add_panel(col, coords, clusters, title):
+            print(f"[DEBUG] Adding panel {col} ('{title}'). Coords shape: {coords.shape if coords is not None else 'None'}")
+            if coords is None:
+                fig.add_annotation(text="No UMAP available", xref="paper", yref="paper",
+                                   x=0.25 if col == 1 else 0.75, y=0.5, showarrow=False)
+                return
+            idx = _sample_idx(coords.shape[0], hvg_max_points)
+            df = pd.DataFrame({'x': coords[idx, 0], 'y': coords[idx, 1]})
+            if clusters is not None:
+                cluster_vals = clusters.values[idx]
+                print(f"[DEBUG] Panel {col}: Plotting {len(df)} points with {len(pd.unique(cluster_vals))} clusters.")
+                for u in pd.unique(cluster_vals):
+                    mask = cluster_vals == u
+                    fig.add_trace(go.Scattergl(x=df.x[mask], y=df.y[mask], mode='markers',
+                                               marker=dict(size=point_size_2d), name=str(u), showlegend=(col == 1)), row=1, col=col)
+            else:
+                print(f"[DEBUG] Panel {col}: Plotting {len(df)} points without clusters.")
+                fig.add_trace(go.Scattergl(x=df.x, y=df.y, mode='markers', marker=dict(size=point_size_2d),
+                                           name=title, showlegend=False), row=1, col=col)
+
+        add_panel(1, coords_def, clusters_def, 'Default')
+        add_panel(2, coords_user, clusters_user, 'User')
+        fig.update_layout(height=plot_height, showlegend=True, autosize=False)
+        print("[DEBUG] Successfully generated plots.")
+        return fig
+    except Exception as e:
+        print(f"[ERROR] Failed to generate HVG plots: {e}")
+        import traceback; traceback.print_exc()
+        return go.Figure()
+
+
 @app.callback(
     Output('hvg-initial-load-trigger', 'data'),
     [Input('main_tabs', 'active_tab')],
@@ -72,19 +139,14 @@ def initial_hvg_load(active_tab, session_ID):
 )
 def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj_plot, umap_select, session_ID, mcfano_cutoff, pvalue_cutoff, hvg_max_points, default_mcfano_cutoff, default_pvalue_cutoff):
     ctx = dash.callback_context
-    print(f"[DEBUG] recalc_hvgs called: triggered={ctx.triggered}, session_ID={session_ID}")
     if not ctx.triggered:
-        print("[DEBUG] No trigger, returning no update.")
         return dash.no_update, dash.no_update, dash.no_update
 
     trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
     adata = cache_adata(session_ID)
-    print(f"[DEBUG] cache_adata in recalc_hvgs: {type(adata)}")
     if adata is None:
-        print("[DEBUG] No AnnData in cache for session.")
-        return "", "No dataset cached for this session", {}
+        return "", "No dataset cached for this session", go.Figure()
 
-    # Define a default keys dictionary to use if we skip recalculation
     keys = {
         "umap_default_key": "X_umap_default_cutoffs",
         "leiden_default_key": "leiden_default_cutoffs",
@@ -92,165 +154,38 @@ def recalc_hvgs(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj
         "leiden_user_key": "leiden_user_cutoffs",
     }
 
-    try:
-        # Check if the trigger is the initial load and if data is pre-calculated
-        recalculate = True
-        if trigger_id == 'hvg-initial-load-trigger':
-            required_var = 'highly_variable_user' in adata.var.columns
-            required_obsm = 'X_umap_user_cutoffs' in adata.obsm
-            if required_var and required_obsm:
-                print("[DEBUG] Pre-calculated HVG data found in AnnData. Skipping recalculation.")
-                recalculate = False
-
-        if recalculate:
-            print("[DEBUG] Recalculating HVGs based on UI controls.")
-            mcfano_cutoff = float(mcfano_cutoff) if mcfano_cutoff is not None else 1.0
-            pvalue_cutoff = float(pvalue_cutoff) if pvalue_cutoff is not None else 0.05
-            print(f"[DEBUG] Using mcfano_cutoff={mcfano_cutoff}, pvalue_cutoff={pvalue_cutoff}")
-
-            # Ensure raw counts layer exists for mcFano
-            if 'counts' not in getattr(adata, 'layers', {}):
-                print("[DEBUG] 'counts' layer missing, copying .X to .layers['counts']")
-                adata.layers['counts'] = adata.X.copy()
-
-            # Run mcFano selection and reductions
-            default_mcFano = float(default_mcfano_cutoff) if default_mcfano_cutoff is not None else 0.9
-            default_pval = float(default_pvalue_cutoff) if default_pvalue_cutoff is not None else 0.05
-            adata, keys = apply_feature_selection_and_reductions(
-                adata,
-                mcfano_cutoff=mcfano_cutoff,
-                pvalue_cutoff=pvalue_cutoff,
-                default_mcFano_threshold=default_mcFano,
-                default_pvalue_threshold=default_pval,
-                cacache=None,
-            )
-            print(f"[DEBUG] apply_feature_selection_and_reductions returned keys: {keys}")
-            cache_history(session_ID, history=(f"Recalculated HVGs with mcFano={mcfano_cutoff}, p={pvalue_cutoff}"))
-            cache_adata(session_ID, adata)
-        
-        # --- Plotting logic (runs for both pre-calculated and recalculated data) ---
-
-        hvgs = []
-        if 'highly_variable_user' in adata.var.columns:
+    # --- PATH 1: Initial load or UI change with pre-calculated data ---
+    if trigger_id != 'recalc_hvgs_button':
+        if 'highly_variable_user' in adata.var.columns and 'X_umap_user_cutoffs' in adata.obsm:
+            print("[INFO] Pre-calculated HVG data found. Generating plots directly.")
+            fig = _generate_hvg_plots(adata, umap_select, hvg_max_points, keys)
             hvgs = list(adata.var[adata.var['highly_variable_user']].index)
-        print(f"[DEBUG] Found {len(hvgs)} HVGs to display.")
+            status = f"Displaying {len(hvgs)} pre-calculated HVGs."
+            hvg_list = html.Ul([html.Li(g) for g in hvgs])
+            return hvg_list, status, fig
 
-        hvg_list = html.Ul([html.Li(g) for g in hvgs]) if hvgs else html.Div("No HVGs found.")
-
-        default_key = keys.get('umap_default_key')
-        user_key = keys.get('umap_user_key')
-        chosen_key = user_key if umap_select == 'user' else default_key
-        print(f"[DEBUG] UMAP keys for plotting: default={default_key}, user={user_key}, chosen={chosen_key}")
-
-        try:
-            def _sample_idx(n, max_points):
-                try:
-                    max_points = int(max_points) if max_points is not None else 10000
-                except Exception:
-                    max_points = 10000
-                if max_points <= 0 or max_points >= n:
-                    return np.arange(n)
-                rng = np.random.default_rng(0)
-                return rng.choice(n, size=max_points, replace=False)
-            def get_coords_and_clusters(u_key, l_key):
-                if (u_key is None) or (u_key not in adata.obsm):
-                    print(f"[DEBUG] UMAP key {u_key} not in adata.obsm")
-                    return None, None
-                coords = np.asarray(adata.obsm[u_key])
-                if coords.ndim == 1:
-                    coords = coords.reshape(-1, 1)
-                if coords.ndim != 2:
-                    print(f"[DEBUG] UMAP coords for {u_key} not 2D")
-                    return None, None
-                if coords.shape[1] < 2:
-                    coords = np.hstack([coords, np.zeros((coords.shape[0], 1))])
-                coords = coords[:, :2].astype(float)
-                clusters = None
-                if (l_key is not None) and (l_key in adata.obs):
-                    clusters = adata.obs[l_key].astype(str)
-                return coords, clusters
-
-            default_leiden = keys.get('leiden_default_key') if keys else None
-            user_leiden = keys.get('leiden_user_key') if keys else None
-
-            coords_def, clusters_def = get_coords_and_clusters(default_key, default_leiden)
-            coords_user, clusters_user = get_coords_and_clusters(user_key, user_leiden)
-
-            fig = make_subplots(rows=1, cols=2, subplot_titles=["Default-cutoff UMAP", "User-cutoff UMAP"])
-
-            def add_panel(col, coords, clusters, title):
-                if coords is None:
-                    print(f"[DEBUG] No UMAP available for panel {col} ({title})")
-                    fig.add_annotation(text="No UMAP available", xref="paper", yref="paper",
-                                       x=0.25 if col == 1 else 0.75, y=0.5, showarrow=False)
-                    return
-                idx = _sample_idx(coords.shape[0], hvg_max_points)
-                sampled_coords = coords[idx]
-                df = pd.DataFrame({'x': sampled_coords[:, 0], 'y': sampled_coords[:, 1]})
-                if clusters is not None:
-                    cluster_vals = clusters.values[idx] if hasattr(clusters, 'values') else np.asarray(clusters)[idx]
-                    unique = list(pd.Series(cluster_vals).unique())
-                    for u in unique:
-                        mask = (cluster_vals == u)
-                        fig.add_trace(go.Scattergl(x=df['x'][mask], y=df['y'][mask], mode='markers',
-                                                   marker=dict(size=point_size_2d), name=str(u), showlegend=(col == 1)), row=1, col=col)
-                else:
-                    fig.add_trace(go.Scattergl(x=df['x'], y=df['y'], mode='markers', marker=dict(size=point_size_2d),
-                                               name=title, showlegend=False), row=1, col=col)
-
-            add_panel(1, coords_def, clusters_def, 'Default')
-            add_panel(2, coords_user, clusters_user, 'User')
-
-            fig.update_layout(height=plot_height, showlegend=True, autosize=False)
-        except Exception as e:
-            print(f"[DEBUG] Exception while building UMAP plots: {e}")
-            fig = {'data': [], 'layout': {'height': plot_height, 'autosize': False}}
-
-        try:
-            if processing_plot_type in ['leiden_n']:
-                coords, clusters = get_coords_and_clusters(chosen_key, user_leiden if umap_select == 'user' else default_leiden)
-                if coords is None:
-                    print(f"[DEBUG] No coords for chosen UMAP {chosen_key}")
-                    return hvg_list, f"Selected {len(hvgs)} HVGs (user mask)", fig
-                traces = []
-                obs = adata.obs
-                idx = _sample_idx(coords.shape[0], hvg_max_points)
-                sampled_coords = coords[idx]
-                sampled_obs = obs.iloc[idx]
-                for i, val in enumerate(sorted(sampled_obs['leiden_n'].unique())):
-                    mask = sampled_obs['leiden_n'] == val
-                    b = sampled_coords[mask.values]
-                    traces.append(go.Scattergl(x=b[:, 0], y=b[:, 1], text=("Cell ID: " + sampled_obs.loc[mask, 'cell_ID']), mode='markers', marker={'size': point_size_2d}, name=("Cluster " + str(val))))
-                single_fig = {'data': traces, 'layout': dict(xaxis={'title': 'UMAP 1'}, yaxis={'title': 'UMAP 2'}, margin=margin, hovermode='closest', height=plot_height, autosize=False)}
-                return hvg_list, f"Selected {len(hvgs)} HVGs (user mask)", single_fig
-            elif processing_plot_type in ['total_counts', 'log1p_total_counts', 'n_genes']:
-                coords, clusters = get_coords_and_clusters(chosen_key, None)
-                if coords is None:
-                    print(f"[DEBUG] No coords for chosen UMAP {chosen_key}")
-                    return hvg_list, f"Selected {len(hvgs)} HVGs (user mask)", fig
-                selected_gene = processing_plot_type
-                values = None
-                if selected_gene in adata.obs.columns:
-                    values = adata.obs[selected_gene].values
-                elif hasattr(adata, 'obs_vector'):
-                    try:
-                        values = adata.obs_vector(selected_gene)
-                    except Exception:
-                        values = None
-                idx = _sample_idx(coords.shape[0], hvg_max_points)
-                df = pd.DataFrame({'x': coords[idx, 0], 'y': coords[idx, 1], 'val': values[idx] if values is not None else None})
-                trace = go.Scattergl(x=df['x'], y=df['y'], mode='markers', marker={'size': point_size_2d, 'color': df['val'], 'colorscale': 'viridis', 'colorbar': dict(title=str(selected_gene))})
-                single_fig = {'data': [trace], 'layout': dict(xaxis={'title': 'UMAP 1'}, yaxis={'title': 'UMAP 2'}, margin=margin, hovermode='closest', height=plot_height, autosize=False)}
-                return hvg_list, f"Selected {len(hvgs)} HVGs (user mask)", single_fig
-        except Exception as e:
-            print(f"[DEBUG] Exception while building single-panel plot: {e}")
-            pass
-
-        status = f"Selected {len(hvgs)} HVGs (user mask)"
-        print(f"[DEBUG] Returning status: {status}")
+    # --- PATH 2: Explicit recalculation required ---
+    print("[INFO] Recalculating HVGs based on UI controls.")
+    try:
+        if 'counts' not in adata.layers:
+            adata.layers['counts'] = adata.X.copy()
+        
+        adata, returned_keys = apply_feature_selection_and_reductions(
+            adata,
+            mcfano_cutoff=float(mcfano_cutoff),
+            pvalue_cutoff=float(pvalue_cutoff),
+            default_mcFano_threshold=float(default_mcfano_cutoff),
+            default_pvalue_threshold=float(default_pvalue_cutoff),
+        )
+        cache_adata(session_ID, adata)
+        
+        fig = _generate_hvg_plots(adata, umap_select, hvg_max_points, returned_keys)
+        hvgs = list(adata.var[adata.var['highly_variable_user']].index)
+        status = f"Found {len(hvgs)} HVGs with current cutoffs."
+        hvg_list = html.Ul([html.Li(g) for g in hvgs])
+        
         return hvg_list, status, fig
 
     except Exception as e:
-        print(f"[DEBUG] Exception in recalc_hvgs: {e}")
-        import traceback; traceback.print_exc()
-        return "", f"HVG calculation failed: {e}", {}
+        print(f"[ERROR] HVG recalculation failed: {e}")
+        return "Error during recalculation.", str(e), go.Figure()

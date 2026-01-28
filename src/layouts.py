@@ -123,9 +123,6 @@ def main_layout():
 		    	# Main layout
 		    	dbc.Col(children=[
 		    		dbc.Tabs(children=[
-		    			### IMPORTING TAB ###
-			        	dbc.Tab(importing_layout(demo=demo), label="Load", 
-			        			tab_id="importing_tab"),
 						
 						### HIGHLY VARIABLE GENES TAB ###
 						dbc.Tab(hvg_layout(), label="Highly Variable Genes", tab_id="hvg_tab"),
@@ -133,14 +130,17 @@ def main_layout():
 						### CORRELATION NETWORK TAB ###
 						dbc.Tab(correlation_tab_layout(), label="Correlations", tab_id="correlation_tab"),
 
+					    ### ANNOTATION TAB ###
+					    dbc.Tab(annotation_layout(), label="Exploration", tab_id="annotation_tab"),
+
 				    	### PROCESSING TAB ###
 			        	dbc.Tab(processing_layout(demo=demo), label="Preprocess", tab_id="processing_tab"),
 						
+		    			### IMPORTING TAB ###
+			        	dbc.Tab(importing_layout(demo=demo), label="Load", tab_id="importing_tab"),
+
 						### MARKER GENE TAB ###
 						dbc.Tab(markergenes_layout(), label="Marker genes", tab_id="markergenes_tab"),
-						
-					    ### ANNOTATION TAB ###
-					    dbc.Tab(annotation_layout(), label="Exploration", tab_id="annotation_tab"),
 
 						### DOWNLOAD ANALYSIS TAB ###
 						dbc.Tab(exporting_layout(demo=demo), label="Save/export", tab_id="exporting_tab"),

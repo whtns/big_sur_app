@@ -12,7 +12,6 @@ from flask_bootstrap import Bootstrap4
 
 from user_management.database import db_session, init_db
 from user_management.models import User, Role
-from helper_functions import prime_adata_cache
 
 from admin.views import AdminView
 
@@ -76,40 +75,30 @@ except AttributeError:
 	# If the extension API differs, silently continue (mail will be sent synchronously as fallback)
 	pass
 
-# Create a user to test with
-def initialize_database():
-	init_db()
-	db_session.commit()
+def initialize_app():
+    """A single function to run all startup tasks."""
+    # Import here to prevent circular dependency
+    from helper_functions import prime_adata_cache
 
-# Register the initialization function in a way that's compatible with
-# Flask 1/2 (`before_first_request`) and Flask 3+ (`before_serving`). If
-# neither hook exists, run initialization immediately as a fallback.
-if hasattr(server, 'before_first_request'):
-	server.before_first_request(initialize_database)
-elif hasattr(server, 'before_serving'):
-	server.before_serving(initialize_database)
-else:
-	# Last-resort: call immediately (useful for some test runners)
-	initialize_database()
+    # 1. Initialize the database
+    print("[INFO] Initializing database...")
+    init_db()
+    db_session.commit()
+    print("[INFO] Database initialized.")
 
-# Prime the template caches for default datasets on startup
-with server.app_context():
+    # 2. Prime the template caches for default datasets
     print("[INFO] Priming default dataset caches on startup...")
-    prime_adata_cache("pbmc3k_processed", "/app/data/selected_datasets/pbmc3k_processed.h5ad")
-    prime_adata_cache("pbmc3k_hvg", "/app/data/selected_datasets/pbmc3k_hvg.h5ad")
+    with server.app_context():
+        prime_adata_cache("pbmc3k_processed", "/app/data/selected_datasets/pbmc3k_processed.h5ad")
+        prime_adata_cache("pbmc3k_hvg", "/app/data/selected_datasets/pbmc3k_hvg.h5ad")
     print("[INFO] Default dataset caches are ready.")
 
-'''
-def create_test_user():
-    init_db()
-    try:
-    	user_datastore.create_user(email='nigeil@yahoo.com', username="nigeil", password='01010101')
-    except exc.SQLAlchemyError:
-    	print("[DEBUG] user already exists")
-    db_session.commit()
-'''
 
-# Setup the admin interface
-admin = Admin(app.server)
-admin.add_view(AdminView(User, db_session, endpoint="user_admin"))
-admin.add_view(AdminView(Role, db_session, endpoint="role_admin"))
+# Register the single initialization function to run before the first request.
+if hasattr(server, 'before_first_request'):
+	server.before_first_request(initialize_app)
+elif hasattr(server, 'before_serving'):
+	server.before_serving(initialize_app)
+else:
+	# Last-resort: call immediately (useful for some test runners)
+	initialize_app()
