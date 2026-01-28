@@ -1,8 +1,5 @@
- <img src="https://raw.githubusercontent.com/Cai-Lab-at-University-of-Michigan/BigSuR/master/images/BigSuR_logo.png" width="500" height="140">
-
-
 ## About
-BigSuR is a python dash-based web-application that enables researchers to upload raw scRNA-seq data and perform filtering, analysis, and manual annotation. **It is largely an interactive wrapper for functions provided by [scanpy](https://github.com/theislab/scanpy) and [palantir](https://github.com/dpeerlab/Palantir)**.
+BigSuR is a python dash-based web-application that enables researchers to upload raw scRNA-seq data and perform filtering, analysis, and manual annotation. **It is largely an interactive wrapper for functions provided by [scanpy](https://github.com/theislab/scanpy) and [BigSur](https://github.com/landerlabcode/BigSur)**.
 
 BigSuR is still in a beta state and a few bugs here and there are to be expected. We welcome your bug reports on our issue tracker! 
 
@@ -13,17 +10,22 @@ BigSuR currently supports the following:
 * Uploading of 10X mapping directory contents
 * Uploading of h5ad formatted scanpy data objects
 
-### Filtering
+### Filtering & Feature Selection
 * Down-sampling UMI counts
 * Filtering by min/max genes per cell
 * Filtering by min cells per gene
-* Identifying a user-defined number of highly-variable genes
+* Identifying highly-variable genes using **mcFano**, a mean-corrected Fano factor.
 
 ### Projections/clustering
 * Changing k, the number of neighbors in the neighborhood graph (for projections)
-* Using [bbknn](https://github.com/Teichlab/bbknn) to do batch corrected neighborhood discovery
-* Changing the clustering resolution used by the [louvain/leiden](https://github.com/vtraag/leidenalg) clusting algorithm
+* Changing the clustering resolution used by the [leiden](https://github.com/vtraag/leidenalg) clusting algorithm
 * Generating UMAP projections
+
+### Correlation Network Analysis
+* Calculation of gene-gene correlation networks using modified Pearson correlation coefficients (mcPCCs).
+* Community detection within the correlation graph using the Leiden algorithm.
+* Calculation of eigenvector centrality to rank genes within communities.
+* Interactive visualization of community centroids and gene-level networks.
 
 ### Marker gene analysis
 * Detection of marker genes for arbitrary combinations of clusters
@@ -102,17 +104,11 @@ Notes:
 - If you prefer not to start Celery automatically when debugging, run the dev server directly via `python src/index.py` and start Celery manually if needed.
 
 ## Who to thank?
-Many helping hands went into the creation of this web application. It was written and is maintained by [Nigel S. Michki](https://github.com/nigeil) in the [Cai Lab](https://www.cai-lab.org/) at the University of Michigan.
-
-Other intellectual contributors include:
-* Logan A. Walker
-* Ye Li
-* Dawen Cai
-* Kevin Stachelek
+This app is based on the MiCV app created by [Nigel S. Michki](https://github.com/nigeil) in the [Cai Lab](https://www.cai-lab.org/) at the University of Michigan.
 
 This application relies heavily upon the incredible work done by the authors and maintainers of many critical software packages, including:
 * [scanpy](https://github.com/theislab/scanpy)
-* [palantir](https://github.com/dpeerlab/Palantir)
+* [BigSur](https://github.com/landerlabcode/BigSur)
 * [bbknn](https://github.com/Teichlab/bbknn)
 * [louvain/leiden](https://github.com/vtraag/leidenalg)
 * [dash](https://plot.ly/dash/)
@@ -126,3 +122,11 @@ This application relies heavily upon the incredible work done by the authors and
 * And many other dependencies down the line
 
 We thank them for their contributions to open scientific computing and discovery.
+
+## Citations
+Please cite the following papers if you use BigSuR in your research:
+
+1. Silkwood K, Dollinger E, Gervin J, Atwood S, Nie Q, Lander AD. Leveraging gene correlations in single cell transcriptomic data. BMC Bioinformatics. 25(1):305. PMCID: PMC11411778
+2. Dollinger EP, Silkwood K, Atwood S, Nie Q, Lander AD. Statistically principled feature selection for single cell transcriptomics. BMC Bioinformatics. 26(1):238. PMCID: PMC12490061
+
+
