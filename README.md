@@ -103,8 +103,9 @@ Notes:
 - By default the provided `start.sh` runs Gunicorn in background; use `--debug` to run the dev server instead.
 - If you prefer not to start Celery automatically when debugging, run the dev server directly via `python src/index.py` and start Celery manually if needed.
 
-## Who to thank?
-This app is based on the MiCV app created by [Nigel S. Michki](https://github.com/nigeil) in the [Cai Lab](https://www.cai-lab.org/) at the University of Michigan.
+### License & Origins
+This application is based on the **MiCV** app, originally created by [Nigel S. Michki](https://github.com/nigeil) in the [Cai Lab](https://www.cai-lab.org/) at the University of Michigan, and is licensed under the Apache License, Version 2.0. A copy of the license is included in the `LICENSE.txt` file.
+
 
 This application relies heavily upon the incredible work done by the authors and maintainers of many critical software packages, including:
 * [scanpy](https://github.com/theislab/scanpy)
