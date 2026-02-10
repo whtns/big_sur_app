@@ -61,7 +61,7 @@ You will need to manually create the following directory on your computer:
 Then, run the redis, celery, and gunicorn servers all together using the provided `./BigSuR.sh` script. Point your browser to [the server](http://localhost:8050), and you should be all set to go! 
 
 ## Usage tips
-* Be patient! Many functions take time (sometimes considerable amounts of it) to process, especially with larger datasets.
+* Be patient! Many functions take time (sometimes considerable amounts of it) to process, especially with larger datasets!
 * You need not "recalculate everything" when you just want to change the UMAP projection or clustering parameters. Each of those processing sections has a button enabling them to be calculated independently (and thus more rapidly).
 * Save your anndata object and load it into scanpy directly for access to any and all of scanpy's extended functionality.
 
