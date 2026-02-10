@@ -31,4 +31,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8050/ || exit 1
 
 # Run Gunicorn
-CMD ["python", "-m", "gunicorn", "--pythonpath", "src", "-k", "gthread", "--threads", "4", "-w", "1", "-b", "0.0.0.0:8050", "--access-logfile", "./logs/gunicorn-access.log", "--error-logfile", "./logs/gunicorn-error.log", "--timeout", "120", "index:server"]
+CMD ["python", "-m", "gunicorn", "--pythonpath", "src", "-k", "gthread", "--threads", "4", "-w", "1", "-b", "0.0.0.0:8050", "--access-logfile", "./logs/gunicorn-access.log", "--error-logfile", "./logs/gunicorn-error.log", "--timeout", "300", "index:server"]

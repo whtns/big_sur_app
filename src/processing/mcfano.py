@@ -18,11 +18,8 @@ import os
 from io import BytesIO
 from typing import Dict, Optional, Sequence, Tuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
-import ipdb
 from utils import check_csr_data_for_int_floats
 
 # imports for BigSur feature selection (optional - external package)
@@ -199,7 +196,8 @@ def get_summary(adata) -> Dict[str, int]:
         "n_hv_user": int(adata.var.get("highly_variable_user", pd.Series(dtype=bool)).sum()),
     }
 
-def fig_to_svg(fig: plt.Figure) -> str:
+def fig_to_svg(fig) -> str:
+    import matplotlib.pyplot as plt
     buf = BytesIO()
     fig.savefig(buf, format="svg")
     buf.seek(0)

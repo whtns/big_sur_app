@@ -40,6 +40,16 @@ app = dash.Dash(server=server, show_undo_redo=False,
 app.title = "BigSuR"
 app.config.suppress_callback_exceptions = True
 
+# Gzip-compress all responses (JS bundles, API responses).
+# Reduces Plotly.js from ~3 MB to ~800 KB over the wire.
+from flask_compress import Compress
+Compress(server)
+
+# Tell browsers to cache static assets for 1 year.
+# Dash fingerprints /_dash-component-suites/ URLs with content hashes,
+# so this is safe — the URL changes whenever the file changes.
+server.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
+
 # Setup cache
 import os
 

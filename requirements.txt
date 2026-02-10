@@ -31,6 +31,7 @@ flask-sqlalchemy
 bcrypt
 sendgrid
 gunicorn==23.0.0
+flask-compress==1.17
 gevent==25.9.1
 zarr==2.18.3
 blosc==1.11.3
