@@ -78,7 +78,7 @@ except AttributeError:
 def initialize_app():
     """A single function to run all startup tasks."""
     # Import here to prevent circular dependency
-    from helper_functions import prime_adata_cache
+    from helper_functions import prime_adata_cache, prime_correlation_cache
 
     # 1. Initialize the database
     print("[INFO] Initializing database...")
@@ -93,12 +93,16 @@ def initialize_app():
         prime_adata_cache("pbmc3k_hvg", "/app/data/selected_datasets/pbmc3k_hvg.h5ad")
     print("[INFO] Default dataset caches are ready.")
 
+    # 3. Pre-warm the correlation graph cache
+    with server.app_context():
+        prime_correlation_cache()
 
-# Register the single initialization function to run before the first request.
-if hasattr(server, 'before_first_request'):
-	server.before_first_request(initialize_app)
-elif hasattr(server, 'before_serving'):
-	server.before_serving(initialize_app)
-else:
-	# Last-resort: call immediately (useful for some test runners)
-	initialize_app()
+
+# Run initialization in a background thread so the server is ready immediately.
+import threading
+def _run_initialize():
+    with server.app_context():
+        initialize_app()
+
+_init_thread = threading.Thread(target=_run_initialize, daemon=True, name="startup-init")
+_init_thread.start()

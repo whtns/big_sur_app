@@ -1,11 +1,10 @@
-import anndata as ad
 import os
 
 import dash
 from dash import html
 from dash.dependencies import Input, Output, State
 
-from helper_functions import cache_adata, cache_history
+from helper_functions import cache_adata, cache_history, load_selected_dataset
 from app import app
 
 from processing.mcfano import apply_feature_selection_and_reductions
@@ -110,18 +109,15 @@ def initial_hvg_load(active_tab, session_ID):
         # Trigger recalc_hvgs with existing data, which will force a plot refresh
         return {'status': 'existing_data'}
 
-    # If no data is cached, load the default pbmc3k_hvg dataset
-    hvg_adata_path = "/app/data/selected_datasets/pbmc3k_hvg.h5ad"
-    print(f"[DEBUG] No dataset in cache. Checking for default HVG file at {hvg_adata_path}")
-    if not os.path.exists(hvg_adata_path):
-        print(f"[DEBUG] Default HVG file not found at {hvg_adata_path}")
-        return dash.no_update
-
-    print(f"[{session_ID}] No dataset loaded. Loading default pre-calculated HVG dataset from {hvg_adata_path}")
+    # If no data is cached, load the default pbmc3k_hvg dataset via the template cache
+    # (fast Zarr copy) rather than parsing the raw .h5ad file on every new session.
+    print(f"[{session_ID}] No dataset loaded. Loading default pre-calculated HVG dataset.")
     try:
-        hvg_adata = ad.read_h5ad(hvg_adata_path)
+        hvg_adata = load_selected_dataset(session_ID, "00002")  # 00002 == pbmc3k_hvg
+        if hvg_adata is None:
+            print(f"[{session_ID}] load_selected_dataset returned None for pbmc3k_hvg")
+            return dash.no_update
         print(f"[DEBUG] Loaded default AnnData: obs={hvg_adata.n_obs}, var={hvg_adata.n_vars}")
-        cache_adata(session_ID, hvg_adata)
         cache_history(session_ID, history="Loaded default pre-calculated HVG dataset (pbmc3k_hvg)")
     except Exception as e:
         print(f"[{session_ID}] Failed to load default pre-calculated HVG dataset: {e}")

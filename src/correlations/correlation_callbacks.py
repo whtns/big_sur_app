@@ -77,12 +77,19 @@ def register_correlation_callbacks(app):
             return [dash.no_update] * 6 + [html.P("Load a dataset before viewing correlations.", className="text-warning")]
         
         try:
-            print(f"[{session_ID}] Loading pre-computed correlation data...")
-            G, var_with_rank, communities_dict = load_correlation_data(
-                session_ID,
-                mcPCCs_path=mcPCCs_path,
-                pvalues_path=pvalues_path,
-            )
+            # Fast path: use the pre-warmed pickle built at startup.
+            correlation_cache_path = os.path.join(correlation_dir, "correlation_cache.pkl")
+            if os.path.exists(correlation_cache_path):
+                print(f"[{session_ID}] Using pre-warmed correlation cache.")
+                with open(correlation_cache_path, "rb") as f:
+                    G, var_with_rank, communities_dict = pickle.load(f)
+            else:
+                print(f"[{session_ID}] Loading pre-computed correlation data (no cache)...")
+                G, var_with_rank, communities_dict = load_correlation_data(
+                    session_ID,
+                    mcPCCs_path=mcPCCs_path,
+                    pvalues_path=pvalues_path,
+                )
             
             session_dir = os.path.join(save_analysis_path, str(session_ID))
             graph_pickle_path = os.path.join(session_dir, "correlation_graph.pkl")

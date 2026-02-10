@@ -123,8 +123,17 @@ def load_selected_dataset(session_ID, dataset_key):
             if os.path.exists(session_cache_dir):
                 shutil.rmtree(session_cache_dir)
             os.makedirs(session_cache_dir, exist_ok=True)
-            
-            shutil.copytree(template_cache_dir, session_zarr_path)
+
+            # Hard-link files instead of copying bytes (near-instant on same filesystem).
+            # Safe because safe_write_zarr atomically replaces the zarr dir on any write,
+            # and write_dense only creates new groups (new files) never touching existing chunks.
+            def _link_or_copy(src, dst):
+                try:
+                    os.link(src, dst)
+                except OSError:
+                    shutil.copy2(src, dst)
+
+            shutil.copytree(template_cache_dir, session_zarr_path, copy_function=_link_or_copy)
             adata = cache_adata(session_ID) # This will now read from the copied Zarr store
             
             # Update the state cache as the original loading logic did
@@ -555,6 +564,9 @@ def remove_old_cache(n_days=1.5):
 
     for r,d,f in os.walk(save_analysis_path):
         for directory in d:
+            if directory.startswith("_template_"):
+                # Never evict pre-warmed template caches — they are shared across all sessions.
+                continue
             timestamp = os.path.getmtime(os.path.join(r,directory))
             if (now-max_time_in_sec > timestamp):
                 try:
@@ -633,6 +645,44 @@ def to_rgba_string(rgb_tuple, opacity=1):
         ret += str(c) + ","
     ret += str(opacity) + ")"
     return ret
+
+def prime_correlation_cache(
+    correlation_dir="/app/data/correlation_results",
+    template_session="_template_pbmc3k_processed",
+):
+    """Pre-warms the correlation graph cache so the Correlations tab opens instantly.
+
+    Loads the pre-computed mcPCCs/p-value matrices, builds the NetworkX graph, runs
+    Leiden community detection, and pickles the result to
+    ``correlation_dir/correlation_cache.pkl``. Subsequent calls are no-ops if the
+    pickle already exists.
+    """
+    mcPCCs_path = os.path.join(correlation_dir, "mcPCCs.npz")
+    pvalues_path = os.path.join(correlation_dir, "BH_corrected_pvalues.npz")
+    cache_path = os.path.join(correlation_dir, "correlation_cache.pkl")
+
+    if not (os.path.exists(mcPCCs_path) and os.path.exists(pvalues_path)):
+        print("[INFO] Correlation source files not found; skipping correlation cache pre-warm.")
+        return
+
+    if os.path.exists(cache_path):
+        print("[INFO] Correlation cache already exists.")
+        return
+
+    print("[INFO] Pre-warming correlation graph cache...")
+    try:
+        from correlations.correlation_functions import load_correlation_data
+        G, var_with_rank, communities_dict = load_correlation_data(
+            template_session,
+            mcPCCs_path=mcPCCs_path,
+            pvalues_path=pvalues_path,
+        )
+        with open(cache_path, "wb") as f:
+            pickle.dump((G, var_with_rank, communities_dict), f)
+        print("[INFO] Correlation graph cache saved.")
+    except Exception as e:
+        print(f"[ERROR] Failed to pre-warm correlation cache: {e}")
+
 
 def prime_adata_cache(name, h5ad_path):
     """
