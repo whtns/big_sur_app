@@ -1,0 +1,4 @@
+agent = "claude-code"
+review_guidelines = """
+Project-specific review instructions here.
+"""
