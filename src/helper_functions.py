@@ -90,6 +90,11 @@ _METADATA_ONLY_GROUPS = {"obs", "var", "obsm", "varm", "obsp", "varp", "uns", "r
 # Populated by prime_adata_cache; avoids re-reading zarr for each new session.
 _template_adata_cache: dict = {}
 
+# Per-session in-memory adata cache.
+# Full reads/writes go here first; partial group writes invalidate the entry.
+# Eliminates redundant zarr reads within the same request cycle.
+_session_adata_cache: dict = {}
+
 
 def _write_zarr_group_direct(zarr_cache_dir, group, adata):
     """Update a single metadata-like AnnData group with one atomic zarr write.
@@ -182,6 +187,9 @@ def load_selected_dataset(session_ID, dataset_key):
                 adata = _template_adata_cache[filename].copy()
             else:
                 adata = cache_adata(session_ID)
+
+            # Warm the session cache so subsequent reads (e.g. recalc_hvgs) skip disk.
+            _session_adata_cache[session_ID] = adata
 
             # Update the state cache as the original loading logic did
             _x = adata.X
@@ -329,6 +337,10 @@ def cache_adata(session_ID, adata=None, group=None, store_dir=None, store_name=N
     lock = FileLock(lock_filename, timeout=lock_timeout)
 
     if adata is None:
+        # Fast path: return from in-memory session cache when no custom store and full read.
+        if store_dir is None and group is None and session_ID in _session_adata_cache:
+            return _session_adata_cache[session_ID]
+
         if not os.path.exists(zarr_cache_dir):
             return None
         def _clean_dense_groups(path):
@@ -374,9 +386,19 @@ def cache_adata(session_ID, adata=None, group=None, store_dir=None, store_name=N
                 'raw': adata.raw
             }
             return mapping.get(group, None)
+        # Cache in memory for future reads (only for default store, full reads).
+        if store_dir is None:
+            _session_adata_cache[session_ID] = adata
         return adata
 
-    # write path
+    # write path — update or invalidate the session in-memory cache.
+    if store_dir is None:
+        if group is None:
+            _session_adata_cache[session_ID] = adata
+        else:
+            # Partial write: in-memory copy is now stale.
+            _session_adata_cache.pop(session_ID, None)
+
     if group is None:
         cache_state(session_ID, key="# cells/obs", val=len(adata.obs.index))
         cache_state(session_ID, key="# genes/var", val=len(adata.var.index))

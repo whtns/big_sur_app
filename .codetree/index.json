@@ -170,11 +170,11 @@
     ]
   },
   "scripts/generate_redis_conf.py": {
-    "mtime": 1769561203.7094111,
+    "mtime": 1775169931.6699898,
     "skeleton": []
   },
   "src/helper_functions.py": {
-    "mtime": 1773271943.5952232,
+    "mtime": 1775171881.3925037,
     "skeleton": [
       {
         "type": "function",
@@ -203,7 +203,7 @@
       {
         "type": "function",
         "name": "_write_zarr_group_direct",
-        "line": 90,
+        "line": 94,
         "parent": null,
         "params": "(zarr_cache_dir, group, adata)",
         "doc": "Update a single metadata-like AnnData group with one atomic zarr write."
@@ -211,7 +211,7 @@
       {
         "type": "function",
         "name": "generate_adata_from_10X",
-        "line": 121,
+        "line": 125,
         "parent": null,
         "params": "(session_ID, data_type=\"10X_mtx\")",
         "doc": "Load 10X-formatted data from the session raw_data directory."
@@ -219,7 +219,7 @@
       {
         "type": "function",
         "name": "load_selected_dataset",
-        "line": 136,
+        "line": 140,
         "parent": null,
         "params": "(session_ID, dataset_key)",
         "doc": "Load bundled sample dataset keyed by dropdown value."
@@ -227,15 +227,23 @@
       {
         "type": "function",
         "name": "safe_write_zarr",
-        "line": 222,
+        "line": 238,
         "parent": null,
         "params": "(adata_obj, zarr_cache_dir)",
         "doc": "Safely write AnnData to a zarr store using atomic replace."
       },
       {
         "type": "function",
+        "name": "has_cached_adata",
+        "line": 307,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": "Fast O(1) check \u2014 returns True if a zarr cache exists for this session."
+      },
+      {
+        "type": "function",
         "name": "cache_adata",
-        "line": 291,
+        "line": 313,
         "parent": null,
         "params": "(session_ID, adata=None, group=None, store_dir=None, store_name=None)",
         "doc": "Read/write AnnData to the session zarr cache."
@@ -243,7 +251,7 @@
       {
         "type": "function",
         "name": "adata_cache_exists",
-        "line": 437,
+        "line": 459,
         "parent": null,
         "params": "(session_ID)",
         "doc": ""
@@ -251,7 +259,7 @@
       {
         "type": "function",
         "name": "adata_cache_group_exists",
-        "line": 447,
+        "line": 469,
         "parent": null,
         "params": "(session_ID, group, store=None)",
         "doc": ""
@@ -259,7 +267,7 @@
       {
         "type": "function",
         "name": "cache_gene_list",
-        "line": 468,
+        "line": 490,
         "parent": null,
         "params": "(session_ID, gene_list=None)",
         "doc": ""
@@ -267,7 +275,7 @@
       {
         "type": "function",
         "name": "get_cell_intersection",
-        "line": 490,
+        "line": 512,
         "parent": null,
         "params": "(session_ID, list_of_selections,\n                          pt_min=0, pt_max=1)",
         "doc": ""
@@ -275,7 +283,7 @@
       {
         "type": "function",
         "name": "get_violin_intersection",
-        "line": 509,
+        "line": 531,
         "parent": null,
         "params": "(session_ID, violin_selected)",
         "doc": ""
@@ -283,7 +291,7 @@
       {
         "type": "function",
         "name": "get_ortholog_data",
-        "line": 548,
+        "line": 570,
         "parent": null,
         "params": "(session_ID, selected_gene)",
         "doc": ""
@@ -291,7 +299,7 @@
       {
         "type": "function",
         "name": "get_gene_snapshot",
-        "line": 556,
+        "line": 578,
         "parent": null,
         "params": "(session_ID, selected_gene)",
         "doc": ""
@@ -299,7 +307,7 @@
       {
         "type": "function",
         "name": "get_disease_data",
-        "line": 565,
+        "line": 587,
         "parent": null,
         "params": "(session_ID, selected_gene)",
         "doc": ""
@@ -307,7 +315,7 @@
       {
         "type": "function",
         "name": "cache_multicolor_scale",
-        "line": 574,
+        "line": 596,
         "parent": null,
         "params": "(session_ID, multi_color_scale=None)",
         "doc": ""
@@ -315,7 +323,7 @@
       {
         "type": "function",
         "name": "remove_old_cache",
-        "line": 595,
+        "line": 617,
         "parent": null,
         "params": "(n_days=1.5)",
         "doc": ""
@@ -323,7 +331,7 @@
       {
         "type": "function",
         "name": "get_obs_vector",
-        "line": 616,
+        "line": 638,
         "parent": null,
         "params": "(session_ID, var, layer=\"X\")",
         "doc": ""
@@ -331,7 +339,7 @@
       {
         "type": "function",
         "name": "generate_marker_gene_table",
-        "line": 665,
+        "line": 687,
         "parent": null,
         "params": "(session_ID)",
         "doc": ""
@@ -339,7 +347,7 @@
       {
         "type": "function",
         "name": "marker_genes_table_exists",
-        "line": 671,
+        "line": 693,
         "parent": null,
         "params": "(session_ID)",
         "doc": ""
@@ -347,7 +355,7 @@
       {
         "type": "function",
         "name": "to_rgba_string",
-        "line": 678,
+        "line": 700,
         "parent": null,
         "params": "(rgb_tuple, opacity=1)",
         "doc": ""
@@ -355,7 +363,7 @@
       {
         "type": "function",
         "name": "prime_correlation_cache",
-        "line": 685,
+        "line": 707,
         "parent": null,
         "params": "(\n    correlation_dir=\"/app/data/correlation_results\",\n    template_session=\"_template_pbmc3k_processed\",\n)",
         "doc": "Pre-warms the correlation graph cache so the Correlations tab opens instantly."
@@ -363,7 +371,7 @@
       {
         "type": "function",
         "name": "prime_adata_cache",
-        "line": 723,
+        "line": 745,
         "parent": null,
         "params": "(name, h5ad_path)",
         "doc": "Pre-warms a template cache for a default dataset."
@@ -2926,7 +2934,7 @@
     ]
   },
   "src/tasks/celery.py": {
-    "mtime": 1769471186.2416294,
+    "mtime": 1775169940.663758,
     "skeleton": []
   },
   "src/processing/processing_callbacks.py": {
@@ -3499,7 +3507,7 @@
     ]
   },
   "src/hvg/hvg_callbacks.py": {
-    "mtime": 1770761681.606134,
+    "mtime": 1775171905.1651552,
     "skeleton": [
       {
         "type": "function",
@@ -3520,7 +3528,7 @@
       {
         "type": "function",
         "name": "recalc_hvgs",
-        "line": 136,
+        "line": 134,
         "parent": null,
         "params": "(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj_plot, umap_select, session_ID, mcfano_cutoff, pvalue_cutoff, hvg_max_points, default_mcfano_cutoff, default_pvalue_cutoff)",
         "doc": ""
