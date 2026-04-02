@@ -4,7 +4,7 @@ import dash
 from dash import html
 from dash.dependencies import Input, Output, State
 
-from helper_functions import cache_adata, cache_history, load_selected_dataset
+from helper_functions import cache_adata, cache_history, has_cached_adata, load_selected_dataset
 from app import app
 
 from processing.mcfano import apply_feature_selection_and_reductions
@@ -102,11 +102,9 @@ def initial_hvg_load(active_tab, session_ID):
     if active_tab != 'hvg_tab':
         return dash.no_update
 
-    # Check if a dataset is already in the cache for this session
-    adata = cache_adata(session_ID)
-    if adata is not None:
+    # Check if a dataset is already in the cache for this session (fast path — no zarr read)
+    if has_cached_adata(session_ID):
         print(f"[DEBUG] A dataset is already in cache for session {session_ID}. Skipping default HVG load.")
-        # Trigger recalc_hvgs with existing data, which will force a plot refresh
         return {'status': 'existing_data'}
 
     # If no data is cached, load the default pbmc3k_hvg dataset via the template cache

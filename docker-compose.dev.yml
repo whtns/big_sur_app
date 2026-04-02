@@ -25,6 +25,6 @@ services:
     # command: celery -A tasks.celery:task_queue worker --loglevel=debug --concurrency=1
 
   redis:
-    # Expose Redis port to host for manual debugging
+    # Expose Redis port to localhost only for manual debugging
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"

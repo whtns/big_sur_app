@@ -1,0 +1,4596 @@
+{
+  "docs/conf.py": {
+    "mtime": 1762390300.6954367,
+    "skeleton": []
+  },
+  "scripts/recalc_test.py": {
+    "mtime": 1769470979.347773,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "main",
+        "line": 17,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "scripts/prepare_pbmc3k_processed.py": {
+    "mtime": 1769496939.371815,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "find_raw",
+        "line": 18,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "main",
+        "line": 30,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "scripts/prepare_pbmc3k_hvg.py": {
+    "mtime": 1769551223.3139777,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "main",
+        "line": 11,
+        "parent": null,
+        "params": "()",
+        "doc": "This script loads the pbmc3k_processed dataset, recalculates highly variable"
+      }
+    ]
+  },
+  "scripts/prepare_pbmc3k_correlations_local.py": {
+    "mtime": 1769551609.7592158,
+    "skeleton": [
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 71,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels=None)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_list",
+        "line": 77,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_dict",
+        "line": 80,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_list",
+        "line": 83,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_dict",
+        "line": 86,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "main",
+        "line": 121,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "scripts/prepare_pbmc3k_correlations.py": {
+    "mtime": 1769561190.1537988,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "main",
+        "line": 20,
+        "parent": null,
+        "params": "()",
+        "doc": "This script loads the pbmc3k_hvg dataset, computes gene-gene correlations"
+      }
+    ]
+  },
+  "scripts/prepare_pbmc3k_hvg_local.py": {
+    "mtime": 1769551475.9334815,
+    "skeleton": [
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 87,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels=None)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_list",
+        "line": 93,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_dict",
+        "line": 96,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_list",
+        "line": 99,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_dict",
+        "line": 102,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "main",
+        "line": 113,
+        "parent": null,
+        "params": "()",
+        "doc": "Local-friendly version of prepare_pbmc3k_hvg.py."
+      }
+    ]
+  },
+  "scripts/generate_redis_conf.py": {
+    "mtime": 1769561203.7094111,
+    "skeleton": []
+  },
+  "src/helper_functions.py": {
+    "mtime": 1773271943.5952232,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "get_scanpy",
+        "line": 20,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_anndata",
+        "line": 27,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "safe_read_zarr",
+        "line": 35,
+        "parent": null,
+        "params": "(zarr_cache_dir)",
+        "doc": "Read an AnnData from a zarr store with best-effort cleanup of helper"
+      },
+      {
+        "type": "function",
+        "name": "_write_zarr_group_direct",
+        "line": 90,
+        "parent": null,
+        "params": "(zarr_cache_dir, group, adata)",
+        "doc": "Update a single metadata-like AnnData group with one atomic zarr write."
+      },
+      {
+        "type": "function",
+        "name": "generate_adata_from_10X",
+        "line": 121,
+        "parent": null,
+        "params": "(session_ID, data_type=\"10X_mtx\")",
+        "doc": "Load 10X-formatted data from the session raw_data directory."
+      },
+      {
+        "type": "function",
+        "name": "load_selected_dataset",
+        "line": 136,
+        "parent": null,
+        "params": "(session_ID, dataset_key)",
+        "doc": "Load bundled sample dataset keyed by dropdown value."
+      },
+      {
+        "type": "function",
+        "name": "safe_write_zarr",
+        "line": 222,
+        "parent": null,
+        "params": "(adata_obj, zarr_cache_dir)",
+        "doc": "Safely write AnnData to a zarr store using atomic replace."
+      },
+      {
+        "type": "function",
+        "name": "cache_adata",
+        "line": 291,
+        "parent": null,
+        "params": "(session_ID, adata=None, group=None, store_dir=None, store_name=None)",
+        "doc": "Read/write AnnData to the session zarr cache."
+      },
+      {
+        "type": "function",
+        "name": "adata_cache_exists",
+        "line": 437,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "adata_cache_group_exists",
+        "line": 447,
+        "parent": null,
+        "params": "(session_ID, group, store=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "cache_gene_list",
+        "line": 468,
+        "parent": null,
+        "params": "(session_ID, gene_list=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_cell_intersection",
+        "line": 490,
+        "parent": null,
+        "params": "(session_ID, list_of_selections,\n                          pt_min=0, pt_max=1)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_violin_intersection",
+        "line": 509,
+        "parent": null,
+        "params": "(session_ID, violin_selected)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_ortholog_data",
+        "line": 548,
+        "parent": null,
+        "params": "(session_ID, selected_gene)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_gene_snapshot",
+        "line": 556,
+        "parent": null,
+        "params": "(session_ID, selected_gene)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_disease_data",
+        "line": 565,
+        "parent": null,
+        "params": "(session_ID, selected_gene)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "cache_multicolor_scale",
+        "line": 574,
+        "parent": null,
+        "params": "(session_ID, multi_color_scale=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "remove_old_cache",
+        "line": 595,
+        "parent": null,
+        "params": "(n_days=1.5)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_obs_vector",
+        "line": 616,
+        "parent": null,
+        "params": "(session_ID, var, layer=\"X\")",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "generate_marker_gene_table",
+        "line": 665,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_genes_table_exists",
+        "line": 671,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "to_rgba_string",
+        "line": 678,
+        "parent": null,
+        "params": "(rgb_tuple, opacity=1)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "prime_correlation_cache",
+        "line": 685,
+        "parent": null,
+        "params": "(\n    correlation_dir=\"/app/data/correlation_results\",\n    template_session=\"_template_pbmc3k_processed\",\n)",
+        "doc": "Pre-warms the correlation graph cache so the Correlations tab opens instantly."
+      },
+      {
+        "type": "function",
+        "name": "prime_adata_cache",
+        "line": 723,
+        "parent": null,
+        "params": "(name, h5ad_path)",
+        "doc": "Pre-warms a template cache for a default dataset."
+      }
+    ]
+  },
+  "src/plotting_functions.py": {
+    "mtime": 1769561201.9379342,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "plot_UMAP",
+        "line": 19,
+        "parent": null,
+        "params": "(adata, clustering_plot_type, selected_cell_intersection=[])",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_UMAP",
+        "line": 68,
+        "parent": null,
+        "params": "(adata, selected_gene)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_violin",
+        "line": 111,
+        "parent": null,
+        "params": "(adata, selected_genes)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_marker_genes",
+        "line": 146,
+        "parent": null,
+        "params": "(adata, obs_column, groups_to_rank)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/index.py": {
+    "mtime": 1769561200.796624,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "send_favicon",
+        "line": 38,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/custom_multi_gene_trends.py": {
+    "mtime": 1769561200.242129,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "custom_plot_multi_gene_trends",
+        "line": 1,
+        "parent": null,
+        "params": "(gene_trends, genes=None, line_colors=None)",
+        "doc": "Plot the gene trends: groups of gene trends in the same panel"
+      }
+    ]
+  },
+  "src/utils.py": {
+    "mtime": 1769561203.0883093,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "check_csr_data_for_int_floats",
+        "line": 2,
+        "parent": null,
+        "params": "(csr_matrix_obj)",
+        "doc": "Checks if the non-zero data elements in a csr_matrix are floats"
+      }
+    ]
+  },
+  "src/app.py": {
+    "mtime": 1770764094.4950485,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "delay_flask_security_mail",
+        "line": 72,
+        "parent": null,
+        "params": "(msg)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "initialize_app",
+        "line": 88,
+        "parent": null,
+        "params": "()",
+        "doc": "A single function to run all startup tasks."
+      },
+      {
+        "type": "function",
+        "name": "_run_initialize",
+        "line": 113,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/layouts.py": {
+    "mtime": 1769561201.3816252,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "titlebar_layout",
+        "line": 21,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "main_layout",
+        "line": 98,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/progress_tracking.py": {
+    "mtime": 1769561202.5151856,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "ProgressTracker",
+        "line": 25,
+        "parent": null,
+        "params": "",
+        "doc": "Tracks task progress and sends email updates via smtplib."
+      },
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 31,
+        "parent": "ProgressTracker",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "update_progress",
+        "line": 45,
+        "parent": "ProgressTracker",
+        "params": "(self, task_id: str, user_email: str, \n                       task_name: str, progress: int, \n                       total: int, details: Optional[str] = None)",
+        "doc": "Update task progress and store in Redis."
+      },
+      {
+        "type": "method",
+        "name": "get_progress",
+        "line": 78,
+        "parent": "ProgressTracker",
+        "params": "(self, task_id: str)",
+        "doc": "Retrieve progress for a specific task."
+      },
+      {
+        "type": "method",
+        "name": "send_progress_email",
+        "line": 94,
+        "parent": "ProgressTracker",
+        "params": "(self, recipient_email: str, task_name: str,\n                           progress: int, total: int, \n                           details: Optional[str] = None,\n                           task_status: str = 'in_progress')",
+        "doc": "Send progress update email via SMTP."
+      },
+      {
+        "type": "method",
+        "name": "send_completion_email",
+        "line": 192,
+        "parent": "ProgressTracker",
+        "params": "(self, recipient_email: str, task_name: str,\n                             success: bool = True, \n                             result_details: Optional[str] = None)",
+        "doc": "Send task completion email via SMTP."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/docs/conf.py": {
+    "mtime": 1773249943.1187592,
+    "skeleton": []
+  },
+  ".worktrees/perf-phase-0-1/scripts/recalc_test.py": {
+    "mtime": 1773249943.1709661,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "main",
+        "line": 17,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/scripts/prepare_pbmc3k_processed.py": {
+    "mtime": 1773249943.1708276,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "find_raw",
+        "line": 18,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "main",
+        "line": 30,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/scripts/prepare_pbmc3k_hvg.py": {
+    "mtime": 1773249943.1704736,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "main",
+        "line": 11,
+        "parent": null,
+        "params": "()",
+        "doc": "This script loads the pbmc3k_processed dataset, recalculates highly variable"
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/scripts/prepare_pbmc3k_correlations_local.py": {
+    "mtime": 1773249943.1703134,
+    "skeleton": [
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 71,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels=None)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_list",
+        "line": 77,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_dict",
+        "line": 80,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_list",
+        "line": 83,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_dict",
+        "line": 86,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "main",
+        "line": 121,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/scripts/prepare_pbmc3k_correlations.py": {
+    "mtime": 1773249943.1701076,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "main",
+        "line": 20,
+        "parent": null,
+        "params": "()",
+        "doc": "This script loads the pbmc3k_hvg dataset, computes gene-gene correlations"
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/scripts/prepare_pbmc3k_hvg_local.py": {
+    "mtime": 1773249943.1706662,
+    "skeleton": [
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 87,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels=None)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_list",
+        "line": 93,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_dict",
+        "line": 96,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_list",
+        "line": 99,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_dict",
+        "line": 102,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "main",
+        "line": 113,
+        "parent": null,
+        "params": "()",
+        "doc": "Local-friendly version of prepare_pbmc3k_hvg.py."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/scripts/generate_redis_conf.py": {
+    "mtime": 1773249943.1696506,
+    "skeleton": []
+  },
+  ".worktrees/perf-phase-0-1/src/helper_functions.py": {
+    "mtime": 1773266699.229037,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "get_scanpy",
+        "line": 20,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_anndata",
+        "line": 27,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "safe_read_zarr",
+        "line": 35,
+        "parent": null,
+        "params": "(zarr_cache_dir)",
+        "doc": "Read an AnnData from a zarr store with best-effort cleanup of helper"
+      },
+      {
+        "type": "function",
+        "name": "generate_adata_from_10X",
+        "line": 88,
+        "parent": null,
+        "params": "(session_ID, data_type=\"10X_mtx\")",
+        "doc": "Load 10X-formatted data from the session raw_data directory."
+      },
+      {
+        "type": "function",
+        "name": "load_selected_dataset",
+        "line": 103,
+        "parent": null,
+        "params": "(session_ID, dataset_key)",
+        "doc": "Load bundled sample dataset keyed by dropdown value."
+      },
+      {
+        "type": "function",
+        "name": "_write_zarr_group_direct",
+        "line": 193,
+        "parent": null,
+        "params": "(zarr_cache_dir, group, data)",
+        "doc": "Write a single group directly into an existing zarr store."
+      },
+      {
+        "type": "function",
+        "name": "safe_write_zarr",
+        "line": 210,
+        "parent": null,
+        "params": "(adata_obj, zarr_cache_dir)",
+        "doc": "Safely write AnnData to a zarr store using atomic replace."
+      },
+      {
+        "type": "function",
+        "name": "cache_adata",
+        "line": 279,
+        "parent": null,
+        "params": "(session_ID, adata=None, group=None, store_dir=None, store_name=None)",
+        "doc": "Read/write AnnData to the session zarr cache."
+      },
+      {
+        "type": "function",
+        "name": "adata_cache_exists",
+        "line": 445,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "adata_cache_group_exists",
+        "line": 455,
+        "parent": null,
+        "params": "(session_ID, group, store=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "cache_gene_list",
+        "line": 476,
+        "parent": null,
+        "params": "(session_ID, gene_list=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_cell_intersection",
+        "line": 498,
+        "parent": null,
+        "params": "(session_ID, list_of_selections,\n                          pt_min=0, pt_max=1)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_violin_intersection",
+        "line": 517,
+        "parent": null,
+        "params": "(session_ID, violin_selected)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_ortholog_data",
+        "line": 556,
+        "parent": null,
+        "params": "(session_ID, selected_gene)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_gene_snapshot",
+        "line": 564,
+        "parent": null,
+        "params": "(session_ID, selected_gene)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_disease_data",
+        "line": 573,
+        "parent": null,
+        "params": "(session_ID, selected_gene)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "cache_multicolor_scale",
+        "line": 582,
+        "parent": null,
+        "params": "(session_ID, multi_color_scale=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "remove_old_cache",
+        "line": 603,
+        "parent": null,
+        "params": "(n_days=1.5)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_obs_vector",
+        "line": 624,
+        "parent": null,
+        "params": "(session_ID, var, layer=\"X\")",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "generate_marker_gene_table",
+        "line": 673,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_genes_table_exists",
+        "line": 679,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "to_rgba_string",
+        "line": 686,
+        "parent": null,
+        "params": "(rgb_tuple, opacity=1)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "prime_correlation_cache",
+        "line": 693,
+        "parent": null,
+        "params": "(\n    correlation_dir=\"/app/data/correlation_results\",\n    template_session=\"_template_pbmc3k_processed\",\n)",
+        "doc": "Pre-warms the correlation graph cache so the Correlations tab opens instantly."
+      },
+      {
+        "type": "function",
+        "name": "prime_adata_cache",
+        "line": 731,
+        "parent": null,
+        "params": "(name, h5ad_path)",
+        "doc": "Pre-warms a template cache for a default dataset."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/plotting_functions.py": {
+    "mtime": 1773249943.1797912,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "plot_UMAP",
+        "line": 19,
+        "parent": null,
+        "params": "(adata, clustering_plot_type, selected_cell_intersection=[])",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_UMAP",
+        "line": 68,
+        "parent": null,
+        "params": "(adata, selected_gene)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_violin",
+        "line": 111,
+        "parent": null,
+        "params": "(adata, selected_genes)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_marker_genes",
+        "line": 146,
+        "parent": null,
+        "params": "(adata, obs_column, groups_to_rank)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/index.py": {
+    "mtime": 1773249943.1782699,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "send_favicon",
+        "line": 38,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/custom_multi_gene_trends.py": {
+    "mtime": 1773249943.175924,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "custom_plot_multi_gene_trends",
+        "line": 1,
+        "parent": null,
+        "params": "(gene_trends, genes=None, line_colors=None)",
+        "doc": "Plot the gene trends: groups of gene trends in the same panel"
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/utils.py": {
+    "mtime": 1773249943.1849394,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "check_csr_data_for_int_floats",
+        "line": 2,
+        "parent": null,
+        "params": "(csr_matrix_obj)",
+        "doc": "Checks if the non-zero data elements in a csr_matrix are floats"
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/app.py": {
+    "mtime": 1773249943.172953,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "delay_flask_security_mail",
+        "line": 72,
+        "parent": null,
+        "params": "(msg)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "initialize_app",
+        "line": 88,
+        "parent": null,
+        "params": "()",
+        "doc": "A single function to run all startup tasks."
+      },
+      {
+        "type": "function",
+        "name": "_run_initialize",
+        "line": 113,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/layouts.py": {
+    "mtime": 1773249943.178636,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "titlebar_layout",
+        "line": 21,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "main_layout",
+        "line": 98,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/progress_tracking.py": {
+    "mtime": 1773249943.18123,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "ProgressTracker",
+        "line": 25,
+        "parent": null,
+        "params": "",
+        "doc": "Tracks task progress and sends email updates via smtplib."
+      },
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 31,
+        "parent": "ProgressTracker",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "update_progress",
+        "line": 45,
+        "parent": "ProgressTracker",
+        "params": "(self, task_id: str, user_email: str, \n                       task_name: str, progress: int, \n                       total: int, details: Optional[str] = None)",
+        "doc": "Update task progress and store in Redis."
+      },
+      {
+        "type": "method",
+        "name": "get_progress",
+        "line": 78,
+        "parent": "ProgressTracker",
+        "params": "(self, task_id: str)",
+        "doc": "Retrieve progress for a specific task."
+      },
+      {
+        "type": "method",
+        "name": "send_progress_email",
+        "line": 94,
+        "parent": "ProgressTracker",
+        "params": "(self, recipient_email: str, task_name: str,\n                           progress: int, total: int, \n                           details: Optional[str] = None,\n                           task_status: str = 'in_progress')",
+        "doc": "Send progress update email via SMTP."
+      },
+      {
+        "type": "method",
+        "name": "send_completion_email",
+        "line": 192,
+        "parent": "ProgressTracker",
+        "params": "(self, recipient_email: str, task_name: str,\n                             success: bool = True, \n                             result_details: Optional[str] = None)",
+        "doc": "Send task completion email via SMTP."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/tasks/tasks.py": {
+    "mtime": 1773250927.0756617,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "send_flask_mail",
+        "line": 24,
+        "parent": null,
+        "params": "(subject=None, sender=None,\n                    recipients=None, body=None,\n                    html=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "write_dense",
+        "line": 52,
+        "parent": null,
+        "params": "(zarr_cache_dir, key, dense_name, chunk_factors)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "track_progress",
+        "line": 86,
+        "parent": null,
+        "params": "(task_id, user_email, task_name, progress, total, details=None)",
+        "doc": "Track and store task progress, optionally sending email updates."
+      },
+      {
+        "type": "function",
+        "name": "send_progress_notification",
+        "line": 103,
+        "parent": null,
+        "params": "(recipient_email, task_name, progress, total, \n                               details=None, task_status='in_progress')",
+        "doc": "Send progress update email via SMTP."
+      },
+      {
+        "type": "function",
+        "name": "send_task_completion",
+        "line": 122,
+        "parent": null,
+        "params": "(recipient_email, task_name, success=True, result_details=None)",
+        "doc": "Send task completion notification via SMTP."
+      },
+      {
+        "type": "function",
+        "name": "_perf_log",
+        "line": 138,
+        "parent": null,
+        "params": "(session_id, request_id, stage, elapsed_ms, **extra)",
+        "doc": "Emit a structured [PERF] log line."
+      },
+      {
+        "type": "function",
+        "name": "_ts",
+        "line": 144,
+        "parent": null,
+        "params": "()",
+        "doc": "Return current UTC wall-clock timestamp as ISO string."
+      },
+      {
+        "type": "function",
+        "name": "compute_correlations_task",
+        "line": 151,
+        "parent": null,
+        "params": "(self, session_ID, pvalue_threshold=0.001, correlation_threshold=0.1)",
+        "doc": "Compute gene correlations from HVG-selected genes in current session."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/tasks/celery.py": {
+    "mtime": 1773249943.1818595,
+    "skeleton": []
+  },
+  ".worktrees/perf-phase-0-1/src/processing/processing_callbacks.py": {
+    "mtime": 1773249943.1806006,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "toggle_procssing_accordion",
+        "line": 21,
+        "parent": null,
+        "params": "(n1, n2, n3, n4, is_open1, is_open2, is_open3, is_open4)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_downsample_cells_slider_output",
+        "line": 43,
+        "parent": null,
+        "params": "(value, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_downsample_counts_slider_output",
+        "line": 59,
+        "parent": null,
+        "params": "(value, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_min_max_genes_output",
+        "line": 74,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_min_cells_output",
+        "line": 81,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_n_top_genes_output",
+        "line": 88,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_n_neighbors_output",
+        "line": 95,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_clustering_resolution_output",
+        "line": 103,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_processing_UMAP",
+        "line": 124,
+        "parent": null,
+        "params": "(all_btn_clicks, proj_btn_clicks,\n                            clust_btn_clicks, processing_plot_type,\n                            neighborhood_method, n_dim_proj_plot, \n                            session_ID, pct_cells, pct_counts,\n                            n_neighbors, resolution, \n                            min_max_genes, min_cells, n_top_genes,\n                            adata=None, target_sum=1e6, \n                            flavor=\"cell_ranger\", n_comps=50, random_state=0)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_violin_QC_plot",
+        "line": 252,
+        "parent": null,
+        "params": "(selected_QC, session_ID)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/processing/processing_layouts.py": {
+    "mtime": 1773249943.1811051,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "processing_layout",
+        "line": 7,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/processing/processing_functions.py": {
+    "mtime": 1773250912.56262,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "_perf_log",
+        "line": 12,
+        "parent": null,
+        "params": "(session_id, request_id, stage, elapsed_ms, **extra)",
+        "doc": "Emit a structured [PERF] log line."
+      },
+      {
+        "type": "function",
+        "name": "downsample_adata",
+        "line": 17,
+        "parent": null,
+        "params": "(session_ID, adata, pct_cells=100, \n                     pct_counts=100)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "preprocess_data",
+        "line": 36,
+        "parent": null,
+        "params": "(session_ID, adata,\n                    min_cells=2, min_genes=200, max_genes=10000,\n                    target_sum=1e6, flavor=\"cell_ranger\",\n                    n_top_genes=2000)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "do_PCA",
+        "line": 112,
+        "parent": null,
+        "params": "(session_ID, adata, n_comps=50, random_state=0)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "do_neighborhood_graph",
+        "line": 126,
+        "parent": null,
+        "params": "(session_ID, adata, method=\"standard\",\n                          n_neighbors=20, random_state=0)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "do_UMAP",
+        "line": 145,
+        "parent": null,
+        "params": "(session_ID, adata, n_dim_proj=2, random_state=0)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "do_clustering",
+        "line": 172,
+        "parent": null,
+        "params": "(session_ID, adata, resolution=0.5,\n                  random_state=0, copy=True)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/processing/mcfano.py": {
+    "mtime": 1773249943.180455,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "load_10x_h5",
+        "line": 49,
+        "parent": null,
+        "params": "(path: str)",
+        "doc": "Load a 10x H5 file into an AnnData object."
+      },
+      {
+        "type": "function",
+        "name": "process_adata",
+        "line": 63,
+        "parent": null,
+        "params": "(adata, min_genes: int = 400, min_cells: int = 3)",
+        "doc": "Basic preprocessing: filter cells/genes, copy counts layer, normalize and log1p."
+      },
+      {
+        "type": "function",
+        "name": "_ensure_file_id",
+        "line": 81,
+        "parent": null,
+        "params": "(adata)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "apply_feature_selection_and_reductions",
+        "line": 89,
+        "parent": null,
+        "params": "(\n    adata,\n    mcfano_cutoff: float = 6.0,\n    pvalue_cutoff: float = 0.01,\n    default_mcFano_threshold: float = 4.0,\n    default_pvalue_threshold: float = 0.01,\n    cacache: Optional[dict] = None,\n)",
+        "doc": "Run mcFano feature selection and compute HV masks and reductions."
+      },
+      {
+        "type": "function",
+        "name": "get_summary",
+        "line": 191,
+        "parent": null,
+        "params": "(adata)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "fig_to_svg",
+        "line": 199,
+        "parent": null,
+        "params": "(fig)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/processing/processing_components.py": {
+    "mtime": 1773249943.1807907,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "plot_processing_UMAP",
+        "line": 10,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "processing_UMAP_dropdown",
+        "line": 31,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_processing_QC",
+        "line": 47,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "processing_QC_dropdown",
+        "line": 75,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "downsample_cells_slider",
+        "line": 90,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "downsample_counts_slider",
+        "line": 120,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "neighbors_method_radio",
+        "line": 150,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "n_dims_proj_radio",
+        "line": 161,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "n_dims_processing_radio",
+        "line": 172,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/configmodule/default_config.py": {
+    "mtime": 1773249943.1747987,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "DefaultConfig",
+        "line": 2,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/admin/views.py": {
+    "mtime": 1773249943.171648,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "AdminView",
+        "line": 4,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "is_accessible",
+        "line": 9,
+        "parent": "AdminView",
+        "params": "(self)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/markergenes/markergenes_callbacks.py": {
+    "mtime": 1773249943.178795,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "refresh_marker_gene_UMAP_dropdown",
+        "line": 25,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_marker_gene_group_dropdown",
+        "line": 56,
+        "parent": null,
+        "params": "(obs_column,\n                                       n_dims_proj, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_marker_gene_plot",
+        "line": 96,
+        "parent": null,
+        "params": "(n_clicks, obs_column, groups_to_rank, \n                             method, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "enabled_marker_genes_download_button",
+        "line": 136,
+        "parent": null,
+        "params": "(active_tab,\n                                         plot_children, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "serve_marker_genes_table_csv",
+        "line": 150,
+        "parent": null,
+        "params": "(path)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/markergenes/markergenes_layouts.py": {
+    "mtime": 1773249943.1791625,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "markergenes_layout",
+        "line": 6,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/markergenes/markergenes_components.py": {
+    "mtime": 1773249943.178922,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "marker_gene_UMAP_dropdown",
+        "line": 8,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_marker_gene_UMAP",
+        "line": 20,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_gene_group_dropdown",
+        "line": 50,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_gene_method_radio",
+        "line": 62,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_gene_plot",
+        "line": 75,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "n_dims_proj_markergenes_radio",
+        "line": 83,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_genes_export_button",
+        "line": 94,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/markergenes/markergenes_functions.py": {
+    "mtime": 1773249943.1790423,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "identify_marker_genes",
+        "line": 4,
+        "parent": null,
+        "params": "(session_ID, adata, obs_column, groups_to_rank, method)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/hvg/correlations.py": {
+    "mtime": 1773249943.177016,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "create_graph_from_mcPCCs",
+        "line": 2,
+        "parent": null,
+        "params": "(mcPCCs_thresholded, var)",
+        "doc": "Create graph from mcPCCs matrix."
+      },
+      {
+        "type": "function",
+        "name": "calculate_communities",
+        "line": 13,
+        "parent": null,
+        "params": "(G, resolution_parameter = 1, edge_cutoff = 0)",
+        "doc": "Run walktrap community detection algorithm on the graph, only considering edges greater than edge_cutoff."
+      },
+      {
+        "type": "function",
+        "name": "calculate_eigenvector_centrality",
+        "line": 35,
+        "parent": null,
+        "params": "(G_postive_only, communities, var)",
+        "doc": "Calculate eigenvector centrality for each cluster in the graph."
+      },
+      {
+        "type": "function",
+        "name": "points_on_circle",
+        "line": 56,
+        "parent": null,
+        "params": "(radius, n_points)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "detect_significant_number_of_negatively_correlated_edges",
+        "line": 63,
+        "parent": null,
+        "params": "(G_centroid, communities_dict)",
+        "doc": "Optimized version: For each pair of clusters, calculate the number of negatively correlated edges and perform a binomial test."
+      },
+      {
+        "type": "function",
+        "name": "build_centroid_graph",
+        "line": 97,
+        "parent": null,
+        "params": "(G, communities_dict)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "calculate_centroid_layout",
+        "line": 127,
+        "parent": null,
+        "params": "(G_centroid, k_centroids=0.1, seed = 0, calculate_spring = True)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "draw_centroid_plot",
+        "line": 147,
+        "parent": null,
+        "params": "(G_centroid, centroid_locations, communities_dict, centroid_ax, color_of_comunities)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "create_gene_network_subset",
+        "line": 170,
+        "parent": null,
+        "params": "(communities_dict, G, community_0 = 0, community_1 = 1, k_network = 0.1, seed = 0, positive_edge_weight_cutoff = 0.1, negative_edge_weight_cutoff = -0.1, recalculate_position = True)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "draw_network_plot",
+        "line": 203,
+        "parent": null,
+        "params": "(G_subset_edges, community_0, community_1, communities_dict, position, positive_edges_to_plot, negative_edges_to_plot, positive_edge_weight_cutoff, negative_edge_weight_cutoff, network_ax, color_of_comunities, font_size = 6)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "make_communities_dict",
+        "line": 226,
+        "parent": null,
+        "params": "(var_with_rank, n_top_genes = 100)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_network",
+        "line": 239,
+        "parent": null,
+        "params": "(G, var_with_rank, k_centroids=0.1, k_network=0.1, seed = 0, axes = None, n_top_genes = 100, positive_edge_weight_cutoff = 0.1, negative_edge_weight_cutoff = -0.1, community_0 = 0, community_1 = 0, calculate_spring = True, recalculate_position = True)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update",
+        "line": 263,
+        "parent": null,
+        "params": "(G, var_with_rank, k_centroids=0.1, k_network=0.1, n_top_genes = 100, positive_edge_weight_cutoff = 0.1, negative_edge_weight_cutoff = -0.1, community_0 = 0, community_1 = 0, calculate_spring = True, recalculate_position = False)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/hvg/hvg_layouts.py": {
+    "mtime": 1773249943.1773539,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "hvg_layout",
+        "line": 5,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/hvg/hvg_callbacks.py": {
+    "mtime": 1773249943.177218,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "_generate_hvg_plots",
+        "line": 21,
+        "parent": null,
+        "params": "(adata, umap_select, hvg_max_points, keys)",
+        "doc": "Helper function to generate UMAP plots from an AnnData object."
+      },
+      {
+        "type": "function",
+        "name": "initial_hvg_load",
+        "line": 93,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": "This callback automatically loads the pre-calculated pbmc3k_hvg.h5ad"
+      },
+      {
+        "type": "function",
+        "name": "recalc_hvgs",
+        "line": 136,
+        "parent": null,
+        "params": "(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj_plot, umap_select, session_ID, mcfano_cutoff, pvalue_cutoff, hvg_max_points, default_mcfano_cutoff, default_pvalue_cutoff)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/annotation/multi_color_scale.py": {
+    "mtime": 1773249943.1726925,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "MultiColorScale",
+        "line": 3,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 5,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_scale_dict",
+        "line": 14,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_value_dict",
+        "line": 26,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_scale_list",
+        "line": 29,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_value_list",
+        "line": 32,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_list",
+        "line": 35,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_dict",
+        "line": 38,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_list",
+        "line": 41,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_dict",
+        "line": 44,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "calculate_hex_color",
+        "line": 47,
+        "parent": "MultiColorScale",
+        "params": "(self, RGB_color)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "calculate_value",
+        "line": 54,
+        "parent": "MultiColorScale",
+        "params": "(self, RGB_color)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/annotation/annotation_callbacks.py": {
+    "mtime": 1773249943.171948,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "refresh_clustering_plot",
+        "line": 22,
+        "parent": null,
+        "params": "(active_tab,\n                            cluster_btn_clicks, clustering_plot_type,\n                            expr_selected, violin_selected,\n                            session_ID, clust_selected,\n                            adata=None, data_dir=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_UMAP_clustering_count",
+        "line": 143,
+        "parent": null,
+        "params": "(selected_cells, session_ID, n_total_cells)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_single_gene_dropdown",
+        "line": 159,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_mixed_gene_dropdown",
+        "line": 175,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_expression_UMAP_plot",
+        "line": 194,
+        "parent": null,
+        "params": "(selected_gene, selected_mixed_genes,\n                                 multi, n_dims_proj, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_UMAP_gene_count",
+        "line": 224,
+        "parent": null,
+        "params": "(selected_cells, session_ID, n_total_cells)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_multi_gene_dropdown",
+        "line": 240,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_violin_gene_count",
+        "line": 258,
+        "parent": null,
+        "params": "(selected_cells, session_ID, n_total_cells)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_gene_data_table",
+        "line": 277,
+        "parent": null,
+        "params": "(selected_gene, session_ID, multi)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/annotation/annotation_functions.py": {
+    "mtime": 1773249943.1725118,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "get_gene_data",
+        "line": 4,
+        "parent": null,
+        "params": "(gene_symbol, organism, is_ENSEMBL=False, find_hsa_ortholog=False)",
+        "doc": "A function used to get gene:"
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/annotation/annotation_layouts.py": {
+    "mtime": 1773249943.1726305,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "annotation_layout",
+        "line": 6,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/annotation/annotation_components.py": {
+    "mtime": 1773249943.1724246,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "plot_clustering_UMAP",
+        "line": 7,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_UMAP",
+        "line": 36,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_gene_violin",
+        "line": 80,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "single_gene_expression_radio",
+        "line": 110,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "single_gene_dropdown",
+        "line": 121,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "mixed_gene_dropdown",
+        "line": 133,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "multi_gene_dropdown",
+        "line": 145,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "clustering_dropdown",
+        "line": 158,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "gene_data_table",
+        "line": 176,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "n_dims_proj_expression_radio",
+        "line": 189,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "gene_violin_count",
+        "line": 201,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "gene_UMAP_count",
+        "line": 206,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "clustering_UMAP_count",
+        "line": 211,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "total_cell_count",
+        "line": 216,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/status/status_functions.py": {
+    "mtime": 1773249943.1815836,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "cache_progress",
+        "line": 7,
+        "parent": null,
+        "params": "(session_ID, progress=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "cache_history",
+        "line": 19,
+        "parent": null,
+        "params": "(session_ID, history=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "build_history_table",
+        "line": 31,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "cache_state",
+        "line": 42,
+        "parent": null,
+        "params": "(session_ID, state=None, key=None, val=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "build_state_table",
+        "line": 61,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/status/status_components.py": {
+    "mtime": 1773249943.1814644,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "status_progress",
+        "line": 4,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "status_history",
+        "line": 8,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "status_state",
+        "line": 16,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/status/status_callbacks.py": {
+    "mtime": 1773249943.1813445,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "update_progress",
+        "line": 18,
+        "parent": null,
+        "params": "(n, session_ID, previous_progress)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_history",
+        "line": 36,
+        "parent": null,
+        "params": "(n, session_ID, previous_history)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_state",
+        "line": 53,
+        "parent": null,
+        "params": "(n, session_ID, previous_state)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/status/status_layouts.py": {
+    "mtime": 1773249943.1816912,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "status_layout",
+        "line": 7,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/exporting/exporting_components.py": {
+    "mtime": 1773249943.1763105,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "exporting_obs_column_dropdown",
+        "line": 4,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "exporting_obs_value_dropdown",
+        "line": 16,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "exporting_obs_subset_button",
+        "line": 28,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "exporting_obs_subset_link_button",
+        "line": 33,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "exporting_subset_radio",
+        "line": 51,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "save_dataset_input",
+        "line": 61,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "save_dataset_button",
+        "line": 76,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/exporting/exporting_layouts.py": {
+    "mtime": 1773249943.1764655,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "exporting_layout",
+        "line": 6,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/exporting/exporting_callbacks.py": {
+    "mtime": 1773249943.1760855,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "enabled_export_button",
+        "line": 39,
+        "parent": null,
+        "params": "(subset_cell_option)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_exporting_obs_column_dropdown",
+        "line": 50,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_exporting_obs_value_dropdown",
+        "line": 80,
+        "parent": null,
+        "params": "(obs_column, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "obs_subset_anndata_h5ad",
+        "line": 114,
+        "parent": null,
+        "params": "(n_clicks, session_ID,\n                            obs_column, obs_values, subset_cell_option)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "save_anndata_dataset",
+        "line": 157,
+        "parent": null,
+        "params": "(n_clicks, session_ID, save_dataset_name,\n                         obs_column, obs_values, subset_cell_option)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "serve_subset_anndata_h5ad",
+        "line": 193,
+        "parent": null,
+        "params": "(path)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/exporting/exporting_functions.py": {
+    "mtime": 1773249943.176339,
+    "skeleton": []
+  },
+  ".worktrees/perf-phase-0-1/src/inputoutput/inputoutput_callbacks.py": {
+    "mtime": 1773249943.1783733,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "run_cleanup",
+        "line": 11,
+        "parent": null,
+        "params": "(n_intervals)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/plotting/plotting_functions.py": {
+    "mtime": 1773249943.1794724,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "_ensure_umap",
+        "line": 23,
+        "parent": null,
+        "params": "(session_ID, n_neighbors=20, method=\"standard\", random_state=0)",
+        "doc": "Regenerate UMAP embeddings if missing by rerunning PCA \u2192 neighbors \u2192 UMAP."
+      },
+      {
+        "type": "function",
+        "name": "plot_UMAP",
+        "line": 38,
+        "parent": null,
+        "params": "(session_ID, clustering_plot_type, selected_cell_intersection=[], n_dim=2)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_UMAP",
+        "line": 161,
+        "parent": null,
+        "params": "(session_ID, selected_genes, multi=\"standard\", n_dim=2)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_violin",
+        "line": 321,
+        "parent": null,
+        "params": "(session_ID, selected_genes, show_points = \"all\")",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_marker_genes",
+        "line": 390,
+        "parent": null,
+        "params": "(session_ID, adata, obs_column, groups_to_rank)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_mixed_expression_value",
+        "line": 408,
+        "parent": null,
+        "params": "(e0, e1=None, e2=None, session_ID=None)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/plotting/multi_color_scale.py": {
+    "mtime": 1773249943.1793144,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "MultiColorScale",
+        "line": 4,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 9,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels=None)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_scale_dict",
+        "line": 18,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_value_dict",
+        "line": 31,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_scale_list",
+        "line": 34,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_value_list",
+        "line": 37,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_list",
+        "line": 40,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_dict",
+        "line": 43,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_list",
+        "line": 46,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_dict",
+        "line": 49,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "calculate_hex_color",
+        "line": 52,
+        "parent": "MultiColorScale",
+        "params": "(self, RGB_color)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "calculate_value",
+        "line": 61,
+        "parent": "MultiColorScale",
+        "params": "(self, RGB_color)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/plotting/plotting_parameters.py": {
+    "mtime": 1773249943.1795976,
+    "skeleton": []
+  },
+  ".worktrees/perf-phase-0-1/src/plotting/discrete_color_scales.py": {
+    "mtime": 1773249943.1792586,
+    "skeleton": []
+  },
+  ".worktrees/perf-phase-0-1/src/user_management/models.py": {
+    "mtime": 1773249943.1847134,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "RolesUsers",
+        "line": 9,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "class",
+        "name": "Role",
+        "line": 15,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "class",
+        "name": "User",
+        "line": 21,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/user_management/database.py": {
+    "mtime": 1773249943.1845841,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "init_db",
+        "line": 14,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/assets/perf.js": {
+    "mtime": 1773251881.1682436,
+    "skeleton": []
+  },
+  ".worktrees/perf-phase-0-1/src/assets/jquery-3.4.1.min.js": {
+    "mtime": 1773249943.1746123,
+    "skeleton": []
+  },
+  ".worktrees/perf-phase-0-1/src/importing/importing_functions.py": {
+    "mtime": 1773249943.1778386,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "get_dataset_list",
+        "line": 14,
+        "parent": null,
+        "params": "(username)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/importing/importing_components.py": {
+    "mtime": 1773249943.1776812,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "importing_dataset_dropdown",
+        "line": 7,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "importing_data_upload",
+        "line": 62,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "importing_user_dataset_list",
+        "line": 144,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "importing_greeting",
+        "line": 240,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/importing/importing_layouts.py": {
+    "mtime": 1773249943.1780984,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "importing_layout",
+        "line": 7,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/importing/importing_callbacks.py": {
+    "mtime": 1773249943.1774762,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "parse_uploaded_data",
+        "line": 24,
+        "parent": null,
+        "params": "(contents, filename, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "parse_selected_dataset",
+        "line": 116,
+        "parent": null,
+        "params": "(btn_clicks, dataset_key, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "access_user_dataset",
+        "line": 158,
+        "parent": null,
+        "params": "(load_btn_clicks, delete_btn_clicks,\n                        dataset_name, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_user_dataset_list",
+        "line": 211,
+        "parent": null,
+        "params": "(n)",
+        "doc": ""
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/correlations/correlation_plotting.py": {
+    "mtime": 1773254361.298932,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "create_centroid_plot_data",
+        "line": 14,
+        "parent": null,
+        "params": "(G_centroid, centroid_locations, communities_dict)",
+        "doc": "Create Plotly traces for centroid graph visualization."
+      },
+      {
+        "type": "function",
+        "name": "_edges_to_trace",
+        "line": 87,
+        "parent": null,
+        "params": "(edges_list, positions, color, width=1, name=None, show_legend=False)",
+        "doc": "Batch all edges into a single trace using None separators."
+      },
+      {
+        "type": "function",
+        "name": "create_edge_traces",
+        "line": 110,
+        "parent": null,
+        "params": "(G, positions, weight_key, color)",
+        "doc": "Create a single batched edge trace for Plotly using None separators."
+      },
+      {
+        "type": "function",
+        "name": "create_network_plot_data",
+        "line": 121,
+        "parent": null,
+        "params": "(\n    G_subset_edges,\n    position,\n    positive_edges_to_plot,\n    negative_edges_to_plot,\n    communities_dict,\n    color_mapping,\n    community_0,\n    community_1\n)",
+        "doc": "Create Plotly traces for gene network visualization."
+      },
+      {
+        "type": "function",
+        "name": "plot_correlation_network",
+        "line": 182,
+        "parent": null,
+        "params": "(\n    G,\n    var_with_rank,\n    communities_dict,\n    k_centroids=0.1,\n    k_network=0.1,\n    seed=0,\n    n_top_genes=100,\n    positive_edge_weight_cutoff=0.1,\n    negative_edge_weight_cutoff=-0.1,\n    community_0=0,\n    community_1=0,\n    calculate_spring=True,\n    recalculate_position=True\n)",
+        "doc": "Create both centroid and gene network plots as Plotly figures."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/correlations/correlation_functions.py": {
+    "mtime": 1773253762.5992165,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "_perf_log",
+        "line": 22,
+        "parent": null,
+        "params": "(session_id, request_id, stage, elapsed_ms, **extra)",
+        "doc": "Emit a structured [PERF] log line."
+      },
+      {
+        "type": "function",
+        "name": "create_graph_from_mcPCCs",
+        "line": 28,
+        "parent": null,
+        "params": "(mcPCCs_thresholded, var, session_id='unknown', request_id=None)",
+        "doc": "Create graph from mcPCCs matrix."
+      },
+      {
+        "type": "function",
+        "name": "calculate_communities",
+        "line": 52,
+        "parent": null,
+        "params": "(G, resolution_parameter=1, edge_cutoff=0, session_id='unknown', request_id=None)",
+        "doc": "Run Leiden community detection algorithm on the graph."
+      },
+      {
+        "type": "function",
+        "name": "calculate_eigenvector_centrality",
+        "line": 90,
+        "parent": null,
+        "params": "(G_positive_only, communities, var)",
+        "doc": "Calculate eigenvector centrality for each cluster in the graph."
+      },
+      {
+        "type": "function",
+        "name": "detect_significant_number_of_negatively_correlated_edges",
+        "line": 110,
+        "parent": null,
+        "params": "(G_centroid, communities_dict)",
+        "doc": "For each pair of clusters, calculate the number of negatively correlated edges"
+      },
+      {
+        "type": "function",
+        "name": "build_centroid_graph",
+        "line": 171,
+        "parent": null,
+        "params": "(G, communities_dict)",
+        "doc": "Build a centroid graph where nodes are communities and edges represent"
+      },
+      {
+        "type": "function",
+        "name": "calculate_centroid_layout",
+        "line": 216,
+        "parent": null,
+        "params": "(G_centroid, k_centroids=0.1, seed=0, calculate_spring=True)",
+        "doc": "Calculate layout for centroid graph."
+      },
+      {
+        "type": "function",
+        "name": "points_on_circle",
+        "line": 247,
+        "parent": null,
+        "params": "(radius, n_points)",
+        "doc": "Generate evenly spaced points on a circle."
+      },
+      {
+        "type": "function",
+        "name": "make_communities_dict",
+        "line": 259,
+        "parent": null,
+        "params": "(var_with_rank, n_top_genes=100)",
+        "doc": "Create dictionary of communities with top N genes by centrality."
+      },
+      {
+        "type": "function",
+        "name": "create_gene_network_subset",
+        "line": 276,
+        "parent": null,
+        "params": "(\n    communities_dict, \n    G, \n    community_0=0, \n    community_1=1,\n    k_network=0.1, \n    seed=0,\n    positive_edge_weight_cutoff=0.1,\n    negative_edge_weight_cutoff=-0.1,\n    recalculate_position=True\n)",
+        "doc": "Create a subset network for specified communities with edge filtering."
+      },
+      {
+        "type": "function",
+        "name": "load_correlation_data",
+        "line": 331,
+        "parent": null,
+        "params": "(session_ID, mcPCCs_path=None, pvalues_path=None,\n                          pvalue_threshold=1e-3, correlation_threshold=0.1)",
+        "doc": "Load mcPCCs and p-values, apply thresholds, and create correlation graph."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/correlations/correlation_layouts.py": {
+    "mtime": 1773249943.1757255,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "correlation_tab_layout",
+        "line": 15,
+        "parent": null,
+        "params": "()",
+        "doc": "Create the main layout for correlation network analysis tab."
+      },
+      {
+        "type": "function",
+        "name": "create_correlation_statistics_table",
+        "line": 92,
+        "parent": null,
+        "params": "(var_with_rank, communities_dict)",
+        "doc": "Create a summary table of community statistics."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/correlations/correlation_components.py": {
+    "mtime": 1773249943.175268,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "create_correlation_controls",
+        "line": 9,
+        "parent": null,
+        "params": "()",
+        "doc": "Create control panel for correlation network parameters."
+      },
+      {
+        "type": "function",
+        "name": "create_correlation_upload_controls",
+        "line": 118,
+        "parent": null,
+        "params": "()",
+        "doc": "Create upload controls for correlation data."
+      }
+    ]
+  },
+  ".worktrees/perf-phase-0-1/src/correlations/correlation_callbacks.py": {
+    "mtime": 1773263589.5896873,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "_perf_log",
+        "line": 35,
+        "parent": null,
+        "params": "(session_id, request_id, stage, elapsed_ms, **extra)",
+        "doc": "Emit a structured [PERF] log line."
+      },
+      {
+        "type": "function",
+        "name": "register_correlation_callbacks",
+        "line": 58,
+        "parent": null,
+        "params": "(app)",
+        "doc": "Register all callbacks for correlation network analysis."
+      }
+    ]
+  },
+  "src/tasks/tasks.py": {
+    "mtime": 1773342628.5501513,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "send_flask_mail",
+        "line": 21,
+        "parent": null,
+        "params": "(subject=None, sender=None,\n                    recipients=None, body=None,\n                    html=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "write_dense",
+        "line": 49,
+        "parent": null,
+        "params": "(zarr_cache_dir, key, dense_name, chunk_factors)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "track_progress",
+        "line": 83,
+        "parent": null,
+        "params": "(task_id, user_email, task_name, progress, total, details=None)",
+        "doc": "Track and store task progress, optionally sending email updates."
+      },
+      {
+        "type": "function",
+        "name": "send_progress_notification",
+        "line": 100,
+        "parent": null,
+        "params": "(recipient_email, task_name, progress, total, \n                               details=None, task_status='in_progress')",
+        "doc": "Send progress update email via SMTP."
+      },
+      {
+        "type": "function",
+        "name": "send_task_completion",
+        "line": 119,
+        "parent": null,
+        "params": "(recipient_email, task_name, success=True, result_details=None)",
+        "doc": "Send task completion notification via SMTP."
+      },
+      {
+        "type": "function",
+        "name": "compute_correlations_task",
+        "line": 137,
+        "parent": null,
+        "params": "(self, session_ID, pvalue_threshold=0.001, correlation_threshold=0.1)",
+        "doc": "Compute gene correlations from HVG-selected genes in current session."
+      }
+    ]
+  },
+  "src/tasks/celery.py": {
+    "mtime": 1769471186.2416294,
+    "skeleton": []
+  },
+  "src/processing/processing_callbacks.py": {
+    "mtime": 1767913101.261186,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "toggle_procssing_accordion",
+        "line": 21,
+        "parent": null,
+        "params": "(n1, n2, n3, n4, is_open1, is_open2, is_open3, is_open4)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_downsample_cells_slider_output",
+        "line": 43,
+        "parent": null,
+        "params": "(value, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_downsample_counts_slider_output",
+        "line": 59,
+        "parent": null,
+        "params": "(value, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_min_max_genes_output",
+        "line": 74,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_min_cells_output",
+        "line": 81,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_n_top_genes_output",
+        "line": 88,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_n_neighbors_output",
+        "line": 95,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_clustering_resolution_output",
+        "line": 103,
+        "parent": null,
+        "params": "(value)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_processing_UMAP",
+        "line": 124,
+        "parent": null,
+        "params": "(all_btn_clicks, proj_btn_clicks,\n                            clust_btn_clicks, processing_plot_type,\n                            neighborhood_method, n_dim_proj_plot, \n                            session_ID, pct_cells, pct_counts,\n                            n_neighbors, resolution, \n                            min_max_genes, min_cells, n_top_genes,\n                            adata=None, target_sum=1e6, \n                            flavor=\"cell_ranger\", n_comps=50, random_state=0)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_violin_QC_plot",
+        "line": 252,
+        "parent": null,
+        "params": "(selected_QC, session_ID)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/processing/processing_layouts.py": {
+    "mtime": 1769452577.79842,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "processing_layout",
+        "line": 7,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/processing/processing_functions.py": {
+    "mtime": 1769528648.2461247,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "downsample_adata",
+        "line": 9,
+        "parent": null,
+        "params": "(session_ID, adata, pct_cells=100, \n                     pct_counts=100)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "preprocess_data",
+        "line": 28,
+        "parent": null,
+        "params": "(session_ID, adata,\n                    min_cells=2, min_genes=200, max_genes=10000,\n                    target_sum=1e6, flavor=\"cell_ranger\", \n                    n_top_genes=2000)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "do_PCA",
+        "line": 99,
+        "parent": null,
+        "params": "(session_ID, adata, n_comps=50, random_state=0)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "do_neighborhood_graph",
+        "line": 109,
+        "parent": null,
+        "params": "(session_ID, adata, method=\"standard\",\n                          n_neighbors=20, random_state=0)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "do_UMAP",
+        "line": 124,
+        "parent": null,
+        "params": "(session_ID, adata, n_dim_proj=2, random_state=0)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "do_clustering",
+        "line": 142,
+        "parent": null,
+        "params": "(session_ID, adata, resolution=0.5,\n                  random_state=0, copy=True)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/processing/mcfano.py": {
+    "mtime": 1770763818.0455945,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "load_10x_h5",
+        "line": 49,
+        "parent": null,
+        "params": "(path: str)",
+        "doc": "Load a 10x H5 file into an AnnData object."
+      },
+      {
+        "type": "function",
+        "name": "process_adata",
+        "line": 63,
+        "parent": null,
+        "params": "(adata, min_genes: int = 400, min_cells: int = 3)",
+        "doc": "Basic preprocessing: filter cells/genes, copy counts layer, normalize and log1p."
+      },
+      {
+        "type": "function",
+        "name": "_ensure_file_id",
+        "line": 81,
+        "parent": null,
+        "params": "(adata)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "apply_feature_selection_and_reductions",
+        "line": 89,
+        "parent": null,
+        "params": "(\n    adata,\n    mcfano_cutoff: float = 6.0,\n    pvalue_cutoff: float = 0.01,\n    default_mcFano_threshold: float = 4.0,\n    default_pvalue_threshold: float = 0.01,\n    cacache: Optional[dict] = None,\n)",
+        "doc": "Run mcFano feature selection and compute HV masks and reductions."
+      },
+      {
+        "type": "function",
+        "name": "get_summary",
+        "line": 191,
+        "parent": null,
+        "params": "(adata)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "fig_to_svg",
+        "line": 199,
+        "parent": null,
+        "params": "(fig)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/processing/processing_components.py": {
+    "mtime": 1763583656.337976,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "plot_processing_UMAP",
+        "line": 10,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "processing_UMAP_dropdown",
+        "line": 31,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_processing_QC",
+        "line": 47,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "processing_QC_dropdown",
+        "line": 75,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "downsample_cells_slider",
+        "line": 90,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "downsample_counts_slider",
+        "line": 120,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "neighbors_method_radio",
+        "line": 150,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "n_dims_proj_radio",
+        "line": 161,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "n_dims_processing_radio",
+        "line": 172,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/configmodule/default_config.py": {
+    "mtime": 1769454622.020665,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "DefaultConfig",
+        "line": 2,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      }
+    ]
+  },
+  "src/admin/views.py": {
+    "mtime": 1762390127.3614738,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "AdminView",
+        "line": 4,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "is_accessible",
+        "line": 9,
+        "parent": "AdminView",
+        "params": "(self)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/markergenes/markergenes_callbacks.py": {
+    "mtime": 1762390127.364682,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "refresh_marker_gene_UMAP_dropdown",
+        "line": 25,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_marker_gene_group_dropdown",
+        "line": 56,
+        "parent": null,
+        "params": "(obs_column,\n                                       n_dims_proj, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_marker_gene_plot",
+        "line": 96,
+        "parent": null,
+        "params": "(n_clicks, obs_column, groups_to_rank, \n                             method, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "enabled_marker_genes_download_button",
+        "line": 136,
+        "parent": null,
+        "params": "(active_tab,\n                                         plot_children, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "serve_marker_genes_table_csv",
+        "line": 150,
+        "parent": null,
+        "params": "(path)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/markergenes/markergenes_layouts.py": {
+    "mtime": 1763583656.315035,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "markergenes_layout",
+        "line": 6,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/markergenes/markergenes_components.py": {
+    "mtime": 1763583656.3196921,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "marker_gene_UMAP_dropdown",
+        "line": 8,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_marker_gene_UMAP",
+        "line": 20,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_gene_group_dropdown",
+        "line": 50,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_gene_method_radio",
+        "line": 62,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_gene_plot",
+        "line": 75,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "n_dims_proj_markergenes_radio",
+        "line": 83,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "marker_genes_export_button",
+        "line": 94,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/markergenes/markergenes_functions.py": {
+    "mtime": 1769534657.7046697,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "identify_marker_genes",
+        "line": 4,
+        "parent": null,
+        "params": "(session_ID, adata, obs_column, groups_to_rank, method)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/hvg/correlations.py": {
+    "mtime": 1764636375.6436775,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "create_graph_from_mcPCCs",
+        "line": 2,
+        "parent": null,
+        "params": "(mcPCCs_thresholded, var)",
+        "doc": "Create graph from mcPCCs matrix."
+      },
+      {
+        "type": "function",
+        "name": "calculate_communities",
+        "line": 13,
+        "parent": null,
+        "params": "(G, resolution_parameter = 1, edge_cutoff = 0)",
+        "doc": "Run walktrap community detection algorithm on the graph, only considering edges greater than edge_cutoff."
+      },
+      {
+        "type": "function",
+        "name": "calculate_eigenvector_centrality",
+        "line": 35,
+        "parent": null,
+        "params": "(G_postive_only, communities, var)",
+        "doc": "Calculate eigenvector centrality for each cluster in the graph."
+      },
+      {
+        "type": "function",
+        "name": "points_on_circle",
+        "line": 56,
+        "parent": null,
+        "params": "(radius, n_points)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "detect_significant_number_of_negatively_correlated_edges",
+        "line": 63,
+        "parent": null,
+        "params": "(G_centroid, communities_dict)",
+        "doc": "Optimized version: For each pair of clusters, calculate the number of negatively correlated edges and perform a binomial test."
+      },
+      {
+        "type": "function",
+        "name": "build_centroid_graph",
+        "line": 97,
+        "parent": null,
+        "params": "(G, communities_dict)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "calculate_centroid_layout",
+        "line": 127,
+        "parent": null,
+        "params": "(G_centroid, k_centroids=0.1, seed = 0, calculate_spring = True)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "draw_centroid_plot",
+        "line": 147,
+        "parent": null,
+        "params": "(G_centroid, centroid_locations, communities_dict, centroid_ax, color_of_comunities)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "create_gene_network_subset",
+        "line": 170,
+        "parent": null,
+        "params": "(communities_dict, G, community_0 = 0, community_1 = 1, k_network = 0.1, seed = 0, positive_edge_weight_cutoff = 0.1, negative_edge_weight_cutoff = -0.1, recalculate_position = True)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "draw_network_plot",
+        "line": 203,
+        "parent": null,
+        "params": "(G_subset_edges, community_0, community_1, communities_dict, position, positive_edges_to_plot, negative_edges_to_plot, positive_edge_weight_cutoff, negative_edge_weight_cutoff, network_ax, color_of_comunities, font_size = 6)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "make_communities_dict",
+        "line": 226,
+        "parent": null,
+        "params": "(var_with_rank, n_top_genes = 100)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_network",
+        "line": 239,
+        "parent": null,
+        "params": "(G, var_with_rank, k_centroids=0.1, k_network=0.1, seed = 0, axes = None, n_top_genes = 100, positive_edge_weight_cutoff = 0.1, negative_edge_weight_cutoff = -0.1, community_0 = 0, community_1 = 0, calculate_spring = True, recalculate_position = True)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update",
+        "line": 263,
+        "parent": null,
+        "params": "(G, var_with_rank, k_centroids=0.1, k_network=0.1, n_top_genes = 100, positive_edge_weight_cutoff = 0.1, negative_edge_weight_cutoff = -0.1, community_0 = 0, community_1 = 0, calculate_spring = True, recalculate_position = False)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/hvg/hvg_layouts.py": {
+    "mtime": 1769548701.6390634,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "hvg_layout",
+        "line": 5,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/hvg/hvg_callbacks.py": {
+    "mtime": 1770761681.606134,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "_generate_hvg_plots",
+        "line": 21,
+        "parent": null,
+        "params": "(adata, umap_select, hvg_max_points, keys)",
+        "doc": "Helper function to generate UMAP plots from an AnnData object."
+      },
+      {
+        "type": "function",
+        "name": "initial_hvg_load",
+        "line": 93,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": "This callback automatically loads the pre-calculated pbmc3k_hvg.h5ad"
+      },
+      {
+        "type": "function",
+        "name": "recalc_hvgs",
+        "line": 136,
+        "parent": null,
+        "params": "(initial_load_trigger, n_clicks, processing_plot_type, n_dim_proj_plot, umap_select, session_ID, mcfano_cutoff, pvalue_cutoff, hvg_max_points, default_mcfano_cutoff, default_pvalue_cutoff)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/annotation/multi_color_scale.py": {
+    "mtime": 1762390127.3619342,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "MultiColorScale",
+        "line": 3,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 5,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_scale_dict",
+        "line": 14,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_value_dict",
+        "line": 26,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_scale_list",
+        "line": 29,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_value_list",
+        "line": 32,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_list",
+        "line": 35,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_dict",
+        "line": 38,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_list",
+        "line": 41,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_dict",
+        "line": 44,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "calculate_hex_color",
+        "line": 47,
+        "parent": "MultiColorScale",
+        "params": "(self, RGB_color)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "calculate_value",
+        "line": 54,
+        "parent": "MultiColorScale",
+        "params": "(self, RGB_color)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/annotation/annotation_callbacks.py": {
+    "mtime": 1767912824.6389318,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "refresh_clustering_plot",
+        "line": 22,
+        "parent": null,
+        "params": "(active_tab,\n                            cluster_btn_clicks, clustering_plot_type,\n                            expr_selected, violin_selected,\n                            session_ID, clust_selected,\n                            adata=None, data_dir=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_UMAP_clustering_count",
+        "line": 143,
+        "parent": null,
+        "params": "(selected_cells, session_ID, n_total_cells)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_single_gene_dropdown",
+        "line": 159,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_mixed_gene_dropdown",
+        "line": 175,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_expression_UMAP_plot",
+        "line": 194,
+        "parent": null,
+        "params": "(selected_gene, selected_mixed_genes,\n                                 multi, n_dims_proj, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_UMAP_gene_count",
+        "line": 224,
+        "parent": null,
+        "params": "(selected_cells, session_ID, n_total_cells)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_multi_gene_dropdown",
+        "line": 240,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "refresh_violin_gene_count",
+        "line": 258,
+        "parent": null,
+        "params": "(selected_cells, session_ID, n_total_cells)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_gene_data_table",
+        "line": 277,
+        "parent": null,
+        "params": "(selected_gene, session_ID, multi)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/annotation/annotation_functions.py": {
+    "mtime": 1762390127.3617954,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "get_gene_data",
+        "line": 4,
+        "parent": null,
+        "params": "(gene_symbol, organism, is_ENSEMBL=False, find_hsa_ortholog=False)",
+        "doc": "A function used to get gene:"
+      }
+    ]
+  },
+  "src/annotation/annotation_layouts.py": {
+    "mtime": 1769452577.7921798,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "annotation_layout",
+        "line": 6,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/annotation/annotation_components.py": {
+    "mtime": 1767912824.6444564,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "plot_clustering_UMAP",
+        "line": 7,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_UMAP",
+        "line": 36,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_gene_violin",
+        "line": 80,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "single_gene_expression_radio",
+        "line": 110,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "single_gene_dropdown",
+        "line": 121,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "mixed_gene_dropdown",
+        "line": 133,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "multi_gene_dropdown",
+        "line": 145,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "clustering_dropdown",
+        "line": 158,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "gene_data_table",
+        "line": 176,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "n_dims_proj_expression_radio",
+        "line": 189,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "gene_violin_count",
+        "line": 201,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "gene_UMAP_count",
+        "line": 206,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "clustering_UMAP_count",
+        "line": 211,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "total_cell_count",
+        "line": 216,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/status/status_functions.py": {
+    "mtime": 1763583656.29871,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "cache_progress",
+        "line": 7,
+        "parent": null,
+        "params": "(session_ID, progress=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "cache_history",
+        "line": 19,
+        "parent": null,
+        "params": "(session_ID, history=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "build_history_table",
+        "line": 31,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "cache_state",
+        "line": 42,
+        "parent": null,
+        "params": "(session_ID, state=None, key=None, val=None)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "build_state_table",
+        "line": 61,
+        "parent": null,
+        "params": "(session_ID)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/status/status_components.py": {
+    "mtime": 1763583656.29868,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "status_progress",
+        "line": 4,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "status_history",
+        "line": 8,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "status_state",
+        "line": 16,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/status/status_callbacks.py": {
+    "mtime": 1762390127.3661857,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "update_progress",
+        "line": 18,
+        "parent": null,
+        "params": "(n, session_ID, previous_progress)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_history",
+        "line": 36,
+        "parent": null,
+        "params": "(n, session_ID, previous_history)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_state",
+        "line": 53,
+        "parent": null,
+        "params": "(n, session_ID, previous_state)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/status/status_layouts.py": {
+    "mtime": 1763583656.298662,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "status_layout",
+        "line": 7,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/exporting/exporting_components.py": {
+    "mtime": 1763583656.315032,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "exporting_obs_column_dropdown",
+        "line": 4,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "exporting_obs_value_dropdown",
+        "line": 16,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "exporting_obs_subset_button",
+        "line": 28,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "exporting_obs_subset_link_button",
+        "line": 33,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "exporting_subset_radio",
+        "line": 51,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "save_dataset_input",
+        "line": 61,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "save_dataset_button",
+        "line": 76,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/exporting/exporting_layouts.py": {
+    "mtime": 1769452577.7922347,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "exporting_layout",
+        "line": 6,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/exporting/exporting_callbacks.py": {
+    "mtime": 1762390127.3635688,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "enabled_export_button",
+        "line": 39,
+        "parent": null,
+        "params": "(subset_cell_option)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_exporting_obs_column_dropdown",
+        "line": 50,
+        "parent": null,
+        "params": "(active_tab, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_exporting_obs_value_dropdown",
+        "line": 80,
+        "parent": null,
+        "params": "(obs_column, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "obs_subset_anndata_h5ad",
+        "line": 114,
+        "parent": null,
+        "params": "(n_clicks, session_ID,\n                            obs_column, obs_values, subset_cell_option)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "save_anndata_dataset",
+        "line": 157,
+        "parent": null,
+        "params": "(n_clicks, session_ID, save_dataset_name,\n                         obs_column, obs_values, subset_cell_option)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "serve_subset_anndata_h5ad",
+        "line": 193,
+        "parent": null,
+        "params": "(path)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/exporting/exporting_functions.py": {
+    "mtime": 1762390127.3636625,
+    "skeleton": []
+  },
+  "src/inputoutput/inputoutput_callbacks.py": {
+    "mtime": 1762390127.3644333,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "run_cleanup",
+        "line": 11,
+        "parent": null,
+        "params": "(n_intervals)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/plotting/plotting_functions.py": {
+    "mtime": 1769533914.7896957,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "_ensure_umap",
+        "line": 23,
+        "parent": null,
+        "params": "(session_ID, n_neighbors=20, method=\"standard\", random_state=0)",
+        "doc": "Regenerate UMAP embeddings if missing by rerunning PCA \u2192 neighbors \u2192 UMAP."
+      },
+      {
+        "type": "function",
+        "name": "plot_UMAP",
+        "line": 38,
+        "parent": null,
+        "params": "(session_ID, clustering_plot_type, selected_cell_intersection=[], n_dim=2)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_UMAP",
+        "line": 161,
+        "parent": null,
+        "params": "(session_ID, selected_genes, multi=\"standard\", n_dim=2)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_expression_violin",
+        "line": 321,
+        "parent": null,
+        "params": "(session_ID, selected_genes, show_points = \"all\")",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "plot_marker_genes",
+        "line": 390,
+        "parent": null,
+        "params": "(session_ID, adata, obs_column, groups_to_rank)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "get_mixed_expression_value",
+        "line": 408,
+        "parent": null,
+        "params": "(e0, e1=None, e2=None, session_ID=None)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/plotting/multi_color_scale.py": {
+    "mtime": 1762390127.365096,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "MultiColorScale",
+        "line": 4,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "__init__",
+        "line": 9,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels=None)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_scale_dict",
+        "line": 18,
+        "parent": "MultiColorScale",
+        "params": "(self, n_levels)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_value_dict",
+        "line": 31,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_scale_list",
+        "line": 34,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "generate_value_list",
+        "line": 37,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_list",
+        "line": 40,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_scale_dict",
+        "line": 43,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_list",
+        "line": 46,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "get_value_dict",
+        "line": 49,
+        "parent": "MultiColorScale",
+        "params": "(self)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "calculate_hex_color",
+        "line": 52,
+        "parent": "MultiColorScale",
+        "params": "(self, RGB_color)",
+        "doc": ""
+      },
+      {
+        "type": "method",
+        "name": "calculate_value",
+        "line": 61,
+        "parent": "MultiColorScale",
+        "params": "(self, RGB_color)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/plotting/plotting_parameters.py": {
+    "mtime": 1764182151.1372757,
+    "skeleton": []
+  },
+  "src/plotting/discrete_color_scales.py": {
+    "mtime": 1762390127.3650386,
+    "skeleton": []
+  },
+  "src/user_management/models.py": {
+    "mtime": 1763597620.7528937,
+    "skeleton": [
+      {
+        "type": "class",
+        "name": "RolesUsers",
+        "line": 9,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "class",
+        "name": "Role",
+        "line": 15,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      },
+      {
+        "type": "class",
+        "name": "User",
+        "line": 21,
+        "parent": null,
+        "params": "",
+        "doc": ""
+      }
+    ]
+  },
+  "src/user_management/database.py": {
+    "mtime": 1769463567.2877784,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "init_db",
+        "line": 14,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      }
+    ]
+  },
+  "src/assets/jquery-3.4.1.min.js": {
+    "mtime": 1762390127.3632405,
+    "skeleton": []
+  },
+  "src/importing/importing_functions.py": {
+    "mtime": 1763512028.6966977,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "get_dataset_list",
+        "line": 14,
+        "parent": null,
+        "params": "(username)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/importing/importing_components.py": {
+    "mtime": 1769556882.4703822,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "importing_dataset_dropdown",
+        "line": 7,
+        "parent": null,
+        "params": "()",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "importing_data_upload",
+        "line": 62,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "importing_user_dataset_list",
+        "line": 144,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "importing_greeting",
+        "line": 240,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/importing/importing_layouts.py": {
+    "mtime": 1763599709.0641012,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "importing_layout",
+        "line": 7,
+        "parent": null,
+        "params": "(demo=False)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/importing/importing_callbacks.py": {
+    "mtime": 1762390127.3639965,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "parse_uploaded_data",
+        "line": 24,
+        "parent": null,
+        "params": "(contents, filename, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "parse_selected_dataset",
+        "line": 116,
+        "parent": null,
+        "params": "(btn_clicks, dataset_key, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "access_user_dataset",
+        "line": 158,
+        "parent": null,
+        "params": "(load_btn_clicks, delete_btn_clicks,\n                        dataset_name, session_ID)",
+        "doc": ""
+      },
+      {
+        "type": "function",
+        "name": "update_user_dataset_list",
+        "line": 211,
+        "parent": null,
+        "params": "(n)",
+        "doc": ""
+      }
+    ]
+  },
+  "src/correlations/correlation_plotting.py": {
+    "mtime": 1769197771.4293056,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "create_centroid_plot_data",
+        "line": 14,
+        "parent": null,
+        "params": "(G_centroid, centroid_locations, communities_dict)",
+        "doc": "Create Plotly traces for centroid graph visualization."
+      },
+      {
+        "type": "function",
+        "name": "create_edge_traces",
+        "line": 97,
+        "parent": null,
+        "params": "(G, positions, weight_key, color, max_weight, min_weight)",
+        "doc": "Create edge traces for Plotly with varying widths."
+      },
+      {
+        "type": "function",
+        "name": "create_network_plot_data",
+        "line": 128,
+        "parent": null,
+        "params": "(\n    G_subset_edges,\n    position,\n    positive_edges_to_plot,\n    negative_edges_to_plot,\n    communities_dict,\n    color_mapping,\n    community_0,\n    community_1\n)",
+        "doc": "Create Plotly traces for gene network visualization."
+      },
+      {
+        "type": "function",
+        "name": "plot_correlation_network",
+        "line": 209,
+        "parent": null,
+        "params": "(\n    G,\n    var_with_rank,\n    communities_dict,\n    k_centroids=0.1,\n    k_network=0.1,\n    seed=0,\n    n_top_genes=100,\n    positive_edge_weight_cutoff=0.1,\n    negative_edge_weight_cutoff=-0.1,\n    community_0=0,\n    community_1=0,\n    calculate_spring=True,\n    recalculate_position=True\n)",
+        "doc": "Create both centroid and gene network plots as Plotly figures."
+      }
+    ]
+  },
+  "src/correlations/correlation_functions.py": {
+    "mtime": 1769197508.6679099,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "create_graph_from_mcPCCs",
+        "line": 20,
+        "parent": null,
+        "params": "(mcPCCs_thresholded, var)",
+        "doc": "Create graph from mcPCCs matrix."
+      },
+      {
+        "type": "function",
+        "name": "calculate_communities",
+        "line": 31,
+        "parent": null,
+        "params": "(G, resolution_parameter=1, edge_cutoff=0)",
+        "doc": "Run Leiden community detection algorithm on the graph."
+      },
+      {
+        "type": "function",
+        "name": "calculate_eigenvector_centrality",
+        "line": 63,
+        "parent": null,
+        "params": "(G_positive_only, communities, var)",
+        "doc": "Calculate eigenvector centrality for each cluster in the graph."
+      },
+      {
+        "type": "function",
+        "name": "detect_significant_number_of_negatively_correlated_edges",
+        "line": 83,
+        "parent": null,
+        "params": "(G_centroid, communities_dict)",
+        "doc": "For each pair of clusters, calculate the number of negatively correlated edges"
+      },
+      {
+        "type": "function",
+        "name": "build_centroid_graph",
+        "line": 144,
+        "parent": null,
+        "params": "(G, communities_dict)",
+        "doc": "Build a centroid graph where nodes are communities and edges represent"
+      },
+      {
+        "type": "function",
+        "name": "calculate_centroid_layout",
+        "line": 189,
+        "parent": null,
+        "params": "(G_centroid, k_centroids=0.1, seed=0, calculate_spring=True)",
+        "doc": "Calculate layout for centroid graph."
+      },
+      {
+        "type": "function",
+        "name": "points_on_circle",
+        "line": 220,
+        "parent": null,
+        "params": "(radius, n_points)",
+        "doc": "Generate evenly spaced points on a circle."
+      },
+      {
+        "type": "function",
+        "name": "make_communities_dict",
+        "line": 232,
+        "parent": null,
+        "params": "(var_with_rank, n_top_genes=100)",
+        "doc": "Create dictionary of communities with top N genes by centrality."
+      },
+      {
+        "type": "function",
+        "name": "create_gene_network_subset",
+        "line": 249,
+        "parent": null,
+        "params": "(\n    communities_dict, \n    G, \n    community_0=0, \n    community_1=1,\n    k_network=0.1, \n    seed=0,\n    positive_edge_weight_cutoff=0.1,\n    negative_edge_weight_cutoff=-0.1,\n    recalculate_position=True\n)",
+        "doc": "Create a subset network for specified communities with edge filtering."
+      },
+      {
+        "type": "function",
+        "name": "load_correlation_data",
+        "line": 304,
+        "parent": null,
+        "params": "(session_ID, mcPCCs_path=None, pvalues_path=None, \n                          pvalue_threshold=1e-3, correlation_threshold=0.1)",
+        "doc": "Load mcPCCs and p-values, apply thresholds, and create correlation graph."
+      }
+    ]
+  },
+  "src/correlations/correlation_layouts.py": {
+    "mtime": 1767915847.3602011,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "correlation_tab_layout",
+        "line": 15,
+        "parent": null,
+        "params": "()",
+        "doc": "Create the main layout for correlation network analysis tab."
+      },
+      {
+        "type": "function",
+        "name": "create_correlation_statistics_table",
+        "line": 92,
+        "parent": null,
+        "params": "(var_with_rank, communities_dict)",
+        "doc": "Create a summary table of community statistics."
+      }
+    ]
+  },
+  "src/correlations/correlation_components.py": {
+    "mtime": 1769194873.8125513,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "create_correlation_controls",
+        "line": 9,
+        "parent": null,
+        "params": "()",
+        "doc": "Create control panel for correlation network parameters."
+      },
+      {
+        "type": "function",
+        "name": "create_correlation_upload_controls",
+        "line": 118,
+        "parent": null,
+        "params": "()",
+        "doc": "Create upload controls for correlation data."
+      }
+    ]
+  },
+  "src/correlations/correlation_callbacks.py": {
+    "mtime": 1770761668.9979825,
+    "skeleton": [
+      {
+        "type": "function",
+        "name": "register_correlation_callbacks",
+        "line": 45,
+        "parent": null,
+        "params": "(app)",
+        "doc": "Register all callbacks for correlation network analysis."
+      }
+    ]
+  }
+}

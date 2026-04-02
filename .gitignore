@@ -13,3 +13,4 @@ tcell_correlation_plots_P14*
 *.pid
 *.rdb
 *.gif
+.env

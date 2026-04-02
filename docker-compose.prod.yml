@@ -27,8 +27,8 @@ services:
           memory: 256M
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://:${REDIS_PASSWORD}@redis:6379/0
     # Production: scale to multiple workers
     # Run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --scale celery-worker=3
 
@@ -44,8 +44,9 @@ services:
           memory: 512M
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - CACHE_REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
       - FLASK_ENV=production
     command: >
       python -m gunicorn 

@@ -5,12 +5,12 @@ services:
     image: redis:7-alpine
     container_name: bigsur-redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -24,8 +24,8 @@ services:
     container_name: bigsur-celery-worker
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://:${REDIS_PASSWORD}@redis:6379/0
       - NUMBA_DISABLE_JIT=1
     depends_on:
       redis:
@@ -45,8 +45,9 @@ services:
     container_name: bigsur-web
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - CACHE_REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
       - NUMBA_DISABLE_JIT=1
     ports:
       - "8050:8050"

@@ -84,6 +84,43 @@ user_dataset_path = os.environ.get('USER_DATASET_PATH', '/app/data/user_datasets
 
 lock_timeout = 60
 use_zarr = True
+_METADATA_ONLY_GROUPS = {"obs", "var", "obsm", "varm", "obsp", "varp", "uns", "raw"}
+
+# In-memory cache for pre-warmed template AnnData objects.
+# Populated by prime_adata_cache; avoids re-reading zarr for each new session.
+_template_adata_cache: dict = {}
+
+
+def _write_zarr_group_direct(zarr_cache_dir, group, adata):
+    """Update a single metadata-like AnnData group with one atomic zarr write.
+
+    This is used to avoid unnecessary dense-materialization tasks for groups that
+    do not affect expression matrices.
+    """
+    ad = get_anndata()
+    try:
+        existing = safe_read_zarr(zarr_cache_dir) if os.path.exists(zarr_cache_dir) else ad.AnnData()
+    except Exception:
+        existing = ad.AnnData()
+
+    if group == 'obs':
+        existing.obs = adata if isinstance(adata, pd.DataFrame) else adata.obs
+    elif group == 'var':
+        existing.var = adata if isinstance(adata, pd.DataFrame) else adata.var
+    elif group == 'obsm':
+        existing.obsm = adata
+    elif group == 'varm':
+        existing.varm = adata
+    elif group == 'obsp':
+        existing.obsp = adata
+    elif group == 'varp':
+        existing.varp = adata
+    elif group == 'uns':
+        existing.uns = adata
+    elif group == 'raw':
+        existing.raw = adata
+
+    safe_write_zarr(existing, zarr_cache_dir)
 
 def generate_adata_from_10X(session_ID, data_type="10X_mtx"):
     """Load 10X-formatted data from the session raw_data directory."""
@@ -134,14 +171,26 @@ def load_selected_dataset(session_ID, dataset_key):
                     shutil.copy2(src, dst)
 
             shutil.copytree(template_cache_dir, session_zarr_path, copy_function=_link_or_copy)
-            adata = cache_adata(session_ID) # This will now read from the copied Zarr store
-            
+
+            # Also copy the gene list pickle from the template if it exists.
+            template_gene_list = os.path.join(save_analysis_path, f"_template_{filename}", "gene_list_cache.pickle")
+            if os.path.exists(template_gene_list):
+                _link_or_copy(template_gene_list, os.path.join(session_cache_dir, "gene_list_cache.pickle"))
+
+            # Use the in-memory template copy if available — avoids a full zarr re-read.
+            if filename in _template_adata_cache:
+                adata = _template_adata_cache[filename].copy()
+            else:
+                adata = cache_adata(session_ID)
+
             # Update the state cache as the original loading logic did
+            _x = adata.X
+            total_counts = int(_x.sum()) if hasattr(_x, 'sum') else int(np.sum(_x))
             state = {
                 "filename": filename,
                 "# cells/obs": len(adata.obs.index),
                 "# genes/var": len(adata.var.index),
-                "# counts": int(np.sum(adata.X)),
+                "# counts": total_counts,
             }
             cache_state(session_ID, state)
             return adata
@@ -255,6 +304,12 @@ def safe_write_zarr(adata_obj, zarr_cache_dir):
                 pass
             raise
 
+def has_cached_adata(session_ID) -> bool:
+    """Fast O(1) check — returns True if a zarr cache exists for this session."""
+    zarr_path = os.path.join(save_analysis_path, str(session_ID), "adata_cache.zarr")
+    return os.path.exists(zarr_path)
+
+
 def cache_adata(session_ID, adata=None, group=None, store_dir=None, store_name=None):
     """Read/write AnnData to the session zarr cache.
 
@@ -336,6 +391,9 @@ def cache_adata(session_ID, adata=None, group=None, store_dir=None, store_name=N
 
     with lock:
         if group in attribute_groups:
+            if group in _METADATA_ONLY_GROUPS:
+                _write_zarr_group_direct(zarr_cache_dir, group, adata)
+                return adata
             try:
                 existing = safe_read_zarr(zarr_cache_dir) if os.path.exists(zarr_cache_dir) else get_anndata().AnnData()
             except Exception:
@@ -707,6 +765,9 @@ def prime_adata_cache(name, h5ad_path):
             
         adata = get_anndata().read_h5ad(h5ad_path)
         cache_adata(template_session_id, adata)
+        gene_list = sorted([str(x) for x in adata.var.index.tolist()], key=str.lower)
+        cache_gene_list(template_session_id, gene_list)
+        _template_adata_cache[name] = adata
         print(f"[INFO] Successfully created template cache for '{name}'.")
     except Exception as e:
         print(f"[ERROR] Failed to prime template cache for '{name}': {e}")

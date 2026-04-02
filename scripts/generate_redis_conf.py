@@ -16,6 +16,12 @@ os.makedirs(os.path.join(app_root, 'run'), exist_ok=True)
 os.makedirs(os.path.join(app_root, 'logs'), exist_ok=True)
 os.makedirs(os.path.join(app_root, 'redis_data'), exist_ok=True)
 
+redis_password = os.environ.get('REDIS_PASSWORD', '')
+if not redis_password:
+    print("WARNING: REDIS_PASSWORD is not set. Redis will start without authentication.", file=sys.stderr)
+
+requirepass_line = f"requirepass {redis_password}" if redis_password else "# requirepass not set — set REDIS_PASSWORD env var"
+
 redis_conf = f"""# BigSuR Redis Configuration
 # Auto-generated with absolute paths
 
@@ -44,6 +50,9 @@ maxmemory-policy allkeys-lru
 
 # Append only file
 appendonly no
+
+# Security
+{requirepass_line}
 
 # Slow log
 slowlog-log-slower-than 10000

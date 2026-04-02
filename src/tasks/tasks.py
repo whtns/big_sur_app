@@ -185,12 +185,18 @@ def compute_correlations_task(self, session_ID, pvalue_threshold=0.001, correlat
     
     # Calculate correlations - results will be saved to disk
     # Note: write_out needs to end with / for BigSuR compatibility
-    calculate_correlations(
-        adata_hvg, 
-        layer='counts',
-        write_out=correlation_output_dir + '/',
-        verbose=1
-    )
+    #
+    # joblib's Loky backend cannot spawn new processes inside a forked Celery worker
+    # (raises "Loky-backed parallel loops cannot be called in a multiprocessing").
+    # Force the threading backend so joblib parallelism works inside the fork.
+    import joblib
+    with joblib.parallel_backend('threading', n_jobs=-1):
+        calculate_correlations(
+            adata_hvg, 
+            layer='counts',
+            write_out=correlation_output_dir + '/',
+            verbose=1
+        )
     
     # Load the computed results from disk
     mcPCCs_path = os.path.join(correlation_output_dir, 'mcPCCs.npz')
